@@ -503,6 +503,65 @@ body.focus .desk{padding-top:12vh}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 @media print{body{overflow:visible}}
 
+/* ---------- guide panel ---------- */
+:root{--guide-w:380px}
+body.guide-open #app,body.guide-open #home{margin-right:var(--guide-w)}
+.guide{position:fixed;top:0;right:0;bottom:0;width:var(--guide-w);z-index:90;background:var(--chrome);border-left:1px solid var(--line);display:flex;flex-direction:column;box-shadow:-8px 0 24px rgba(0,0,0,.06)}
+.guide-h{padding:10px 12px 10px 14px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.guide-title{display:flex;align-items:center;gap:8px;color:var(--accent)}
+.guide-title b{color:var(--ink);font-size:15px}
+.guide-search{width:100%}
+.guide-body{flex:1;overflow:auto;padding:14px 16px 40px}
+.guide-hero{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.guide-hero h2{margin:0 0 6px;font:600 20px/1.2 var(--serif);color:var(--accent)}
+.guide-hero p{margin:0 0 12px;color:var(--muted);line-height:1.5}
+.guide-hero-acts{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.guide-toc{display:flex;flex-direction:column;gap:2px}
+.guide-toc-row{display:flex;align-items:center;gap:10px;text-align:left;border:0;background:none;padding:8px 8px;border-radius:8px;color:var(--ink);width:100%}
+.guide-toc-row:hover{background:var(--hover)}
+.guide-toc-row .gt-num{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;background:var(--chrome-2);color:var(--muted)}
+.guide-toc-row.read .gt-num{background:var(--accent-soft);color:var(--accent)}
+.guide-toc-row .gt-text{flex:1;min-width:0;display:flex;flex-direction:column}
+.guide-toc-row .gt-text span{font-size:12px;color:var(--muted)}
+.guide-toc-row>svg{color:var(--faint);flex:none}
+.guide-back{margin:-4px 0 8px -4px}
+.guide-kicker{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:6px}
+.guide-ch-h h2{margin:0 0 4px;font:600 22px/1.2 var(--serif)}
+.guide-ch-h p{margin:0 0 12px;color:var(--muted)}
+.guide-show{margin-bottom:6px}
+.guide-sec{margin-top:18px}
+.guide-sec h3{margin:0 0 6px;font-size:14.5px}
+.guide-text{line-height:1.55;color:var(--ink)}
+.guide-text p{margin:0 0 8px}
+.guide-text ul,.guide-text ol{margin:0 0 8px;padding-left:20px}
+.guide-text li{margin:3px 0}
+.guide-text code{font:12.5px var(--mono);background:var(--chrome-2);padding:1px 4px;border-radius:4px}
+.guide-tip{display:flex;gap:8px;background:var(--accent-soft);border-radius:8px;padding:9px 11px;margin-top:8px;line-height:1.5;font-size:13px}
+.guide-tip b{color:var(--accent);flex:none}
+.guide-keys{margin-top:12px}
+.guide-nav{display:flex;justify-content:space-between;gap:8px;margin-top:26px;padding-top:14px;border-top:1px solid var(--line);flex-wrap:wrap}
+.guide-nav .btn{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.guide-hit{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;border:0;background:none;padding:9px 8px;border-radius:8px;color:var(--ink)}
+.guide-hit:hover{background:var(--hover)}
+.guide-hit .gh-ch{font-size:11px;color:var(--accent);font-weight:600}
+.guide-hit .gh-snip{font-size:12px;color:var(--muted)}
+.welcome p{margin:0 0 10px;line-height:1.55}
+body.guide-open .topbar .icon-btn .lbl{display:none}
+body.guide-open .seg button{white-space:nowrap}
+@media (max-width:1300px){body.guide-open .seg .lbl{display:none}}
+@media (max-width:1100px){:root{--guide-w:340px}}
+@media (max-width:900px){body.guide-open #app,body.guide-open #home{margin-right:0}.guide{width:100%;left:0;border-left:0}}
+@media (max-width:760px){#b-help{display:none}}
+
+/* ---------- guided tour ---------- */
+.tour-back{position:fixed;inset:0;z-index:200}
+.tour-hole{position:fixed;z-index:201;border-radius:10px;box-shadow:0 0 0 2px var(--accent),0 0 0 9999px rgba(10,20,22,.5);pointer-events:none;transition:all .25s ease}
+.tour-pop{position:fixed;z-index:202;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:var(--pop);padding:14px 16px 12px;width:340px;transition:left .25s ease,top .25s ease}
+.tour-pop h3{margin:2px 0 6px;font:600 17px/1.25 var(--serif);color:var(--accent)}
+.tour-count{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.tour-text{line-height:1.55;font-size:13.5px}
+.tour-f{display:flex;align-items:center;gap:6px;margin-top:12px}
+
 </style>
 </head>
 <body>
@@ -524,6 +583,7 @@ body.focus .desk{padding-top:12vh}
     <button class="icon-btn" id="b-focus" title="Focus mode (Ctrl+Shift+F)"></button>
     <button class="icon-btn" id="b-theme" title="Theme"></button>
     <button class="icon-btn" id="b-insp" title="Show or hide the inspector"></button>
+    <button class="icon-btn" id="b-help" title="Guide and tutorial (F1)" aria-label="Guide and tutorial"></button>
     <button class="icon-btn" id="b-more" title="More" aria-label="More"></button>
   </header>
 
@@ -1705,7 +1765,7 @@ function iconFor(it) {
 async function boot() {
   applyTheme();
   const list = await Store.all().catch(() => []);
-  if (!list.length) { const s = makeSample(); await Store.put(s).catch(() => { }); return openProject(s.id, s); }
+  if (!list.length) { const s = makeSample(); await Store.put(s).catch(() => { }); await openProject(s.id, s); maybeWelcome(); return; }
   const last = PREFS.last && list.find(p => p.id === PREFS.last);
   if (last) return openProject(last.id, last);
   showHome();
@@ -1763,6 +1823,7 @@ async function showHome() {
   home.append(h('div', { class: 'home-in' },
     h('div', { class: 'home-top' }, h('span', { class: 'wordmark' }, 'Folio'), h('span', { class: 'spacer' }),
       h('button', { class: 'btn primary', id: 'home-install', hidden: !PWA.canInstall(), onclick: installApp }, icon('install', 16), 'Install app'),
+      h('button', { class: 'btn', onclick: () => openGuide() }, icon('help', 16), 'Guide'),
       h('button', { class: 'btn', onclick: openProjectFile }, icon('upload', 16), 'Open a .folio file'),
       h('button', { class: 'btn', onclick: () => { PREFS.theme = { system: 'light', light: 'dark', dark: 'sepia', sepia: 'system' }[PREFS.theme]; savePrefs(); applyTheme(); toast('Theme: ' + PREFS.theme); } }, icon('moon', 16), 'Theme')),
     h('p', { class: 'home-tag' }, 'A writing studio for short stories, novellas and novels. Plan on cards, draft in scenes, track your goals, and export a submission-ready manuscript in one step.'),
@@ -1818,7 +1879,7 @@ async function adoptProject(p, hnd) {
 /* ---------- top chrome ---------- */
 function buildChrome() {
   const set = (id, ic, label) => { const b = $(id); b.textContent = ''; b.append(icon(ic)); if (label) b.append(h('span', { class: 'lbl' }, label)); };
-  set('#b-binder', 'sidebar'); set('#b-insp', 'panel'); set('#b-more', 'more');
+  set('#b-binder', 'sidebar'); set('#b-insp', 'panel'); set('#b-more', 'more'); set('#b-help', 'help');
   set('#b-find', 'search'); set('#b-split', 'split'); set('#b-goals', 'target', 'Goals'); set('#b-export', 'download', 'Export'); set('#b-install', 'install', 'Install'); $('#b-install').onclick = installApp; refreshInstallUI(); set('#b-focus', 'focus', 'Focus');
   set('#b-theme', PREFS.theme === 'dark' ? 'sun' : 'moon');
   set('#b-newdoc', 'plus'); $('#b-newdoc').append(h('span', { class: 'lbl' }, 'Doc'));
@@ -1842,7 +1903,11 @@ function wireChrome() {
   $('#b-export').onclick = openExport;
   $('#b-focus').onclick = () => setFocus(!S.focus);
   $('#b-theme').onclick = e => popMenu(e.currentTarget, ['system', 'light', 'dark', 'sepia'].map(t => ({ label: (PREFS.theme === t ? '✓ ' : '   ') + t[0].toUpperCase() + t.slice(1) + (t === 'system' ? ' (match device)' : ''), onClick: () => { PREFS.theme = t; savePrefs(); applyTheme(); buildChrome(); } })));
+  $('#b-help').onclick = toggleGuide;
   $('#b-more').onclick = e => popMenu(e.currentTarget, [
+    { label: 'Guide and tutorial', icon: 'help', key: 'F1', onClick: () => openGuide() },
+    { label: 'Take the 2-minute tour', icon: 'play', onClick: () => startTour('welcome') },
+    { sep: true },
     { label: 'All projects', icon: 'home', onClick: showHome },
     { label: 'New project', icon: 'plus', onClick: newProjectDialog },
     { sep: true },
@@ -2260,6 +2325,8 @@ document.addEventListener('fullscreenchange', () => { if (!document.fullscreenEl
 
 /* ---------- keyboard ---------- */
 function onGlobalKey(e) {
+  if (e.key === 'F1' || ((e.ctrlKey || e.metaKey) && e.key === '/')) { e.preventDefault(); toggleGuide(); return; }
+  if (e.key === 'Escape' && GUIDE_STATE.el && GUIDE_STATE.el.contains(document.activeElement)) { closeGuide(); return; }
   if (!S.p || $('#app').hidden) return;
   const mod = e.ctrlKey || e.metaKey; const k = e.key.toLowerCase();
   if (e.key === 'Escape') { if (S.findOpen) { closeFind(); return; } if (S.focus) { setFocus(false); return; } }
@@ -2276,11 +2343,12 @@ function onGlobalKey(e) {
   else if (k === 'b' && e.shiftKey && e.altKey) { e.preventDefault(); openBackups(); }
 }
 const activeEdFocused = () => document.activeElement && document.activeElement.classList.contains('ed');
-function openShortcuts() {
-  const rows = [['Ctrl K', 'Quick open any document'], ['Ctrl F / Ctrl H', 'Find / find and replace'], ['Ctrl S', 'Save now (it also saves automatically)'], ['Ctrl Shift S', 'Take a snapshot'],
+const SHORTCUTS = [['Ctrl K', 'Quick open any document'], ['Ctrl F / Ctrl H', 'Find / find and replace'], ['Ctrl S', 'Save now (it also saves automatically)'], ['Ctrl Shift S', 'Take a snapshot'],
     ['Ctrl Shift F', 'Focus mode'], ['Esc', 'Leave focus mode or close find'], ['Alt N', 'New document'], ['Ctrl Alt M', 'Comment on selection'], ['Ctrl B / I / U', 'Bold / italic / underline'],
     ['Ctrl Alt 1–3', 'Heading 1–3'], ['Ctrl Alt 0', 'Normal text'], ['Ctrl Shift L / E / R', 'Align left / centre / right'], ['Ctrl Shift 7 / 8', 'Numbered / bulleted list'], ['Ctrl Shift E', 'Export (outside the editor)'],
-    ['Ctrl Shift U', 'Read aloud from the cursor'], ['Ctrl Alt Shift B', 'Backups'], ['F2', 'Rename in binder'], ['Delete', 'Move binder item to trash'], ['"  \'  --  ...', 'Typed as “ ” ‘ ’ — … automatically']];
+    ['Ctrl Shift U', 'Read aloud from the cursor'], ['Ctrl Alt Shift B', 'Backups'], ['F1 / Ctrl /', 'Open or close the guide'], ['F2', 'Rename in binder'], ['Delete', 'Move binder item to trash'], ['"  \'  --  ...', 'Typed as “ ” ‘ ’ — … automatically']];
+function openShortcuts() {
+  const rows = SHORTCUTS;
   modal({ title: 'Keyboard shortcuts', body: h('div', { class: 'kbd-list' }, rows.map(([k, d]) => [h('span', {}, k.split(' / ').map((x, i) => [i ? ' / ' : '', h('kbd', {}, x)])), h('span', {}, d)])), actions: [{ label: 'Done', primary: true }] });
   $$('.kbd-list kbd').forEach(k => { k.textContent = k.textContent.replace(/Ctrl/g, /Mac/.test(navigator.platform) ? '⌘' : 'Ctrl'); });
 }
@@ -3681,6 +3749,442 @@ function initPWA() {
     let last = Date.now();
     document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - last > 3600e3) { last = Date.now(); reg.update().catch(() => { }); } });
   }).catch(e => console.warn('Offline support unavailable:', e));
+}
+
+/* =========================================================
+   Folio — built-in guide and guided tours.
+   The guide opens in a side panel you can keep open while you work
+   (F1, the ? button, More › Guide, or the home screen).
+   "Show me" runs a tour that highlights the real controls.
+   ========================================================= */
+
+/* ---------- tour helpers ---------- */
+function gEnsureProject() {
+  if (S.p) return Promise.resolve(true);
+  return Store.all().then(list => {
+    list.sort((a, b) => b.modified - a.modified);
+    if (list[0]) return openProject(list[0].id, list[0]).then(() => true);
+    const s = makeSample(); return Store.put(s).then(() => openProject(s.id, s)).then(() => true);
+  });
+}
+function gDoc() {
+  // Make sure a manuscript document is open in the Write view.
+  if (S.focus) setFocus(false);
+  if (!isDoc(I(S.cur)) || S.mode === 'map') { const d = manuscriptDocs()[0]; if (d) openItem(d); }
+  if (S.mode !== 'write') setMode('write');
+}
+function gFolder(mode) {
+  if (S.focus) setFocus(false);
+  let it = I(S.cur);
+  if (isDoc(it)) it = I(it.parent);
+  if (!it || it.type !== 'folder' || zoneOf(it.id) !== 'manuscript') it = I('manuscript');
+  S.cur = it.id; setMode(mode);
+}
+function gBinder() { if (!PREFS.binder) { PREFS.binder = true; buildChrome(); } }
+function gInsp(tab) { if (!PREFS.insp) { PREFS.insp = true; buildChrome(); } if (tab) { S.inspTab = tab; renderInspector(); } }
+function gTab(name) { return () => $$('#insp-tabs button').find(b => b.textContent.startsWith(name)); }
+
+const TOURS = {
+  welcome: [
+    { title: 'Welcome to Folio', text: 'This short tour shows where everything lives. It takes about two minutes. Use the arrow keys or the buttons below, and press Esc to stop at any time.' },
+    { sel: '.binder', prep: () => { gDoc(); gBinder(); }, title: 'The binder', text: 'Your whole project: the <b>Manuscript</b> (the book itself), plus <b>Characters</b>, <b>Places</b>, <b>Research</b> and <b>Notes</b>. Write in small pieces, one scene per document, and drag them to reorder.' },
+    { sel: '#viewseg', title: 'Four ways to see your book', text: '<b>Write</b> is the page. <b>Corkboard</b> shows scenes as index cards. <b>Outline</b> is a table of every scene. <b>Story map</b> tracks plotlines and characters across scenes.' },
+    { sel: '#toolbar', title: 'The formatting toolbar', text: 'Styles, fonts, bold, italic, colours, alignment, line spacing and lists work just as they do in Word or Google Docs. Further along: scene breaks, comments and snapshots.' },
+    { sel: '.paper', title: 'The page', text: 'Just type. Folio saves half a second after you stop. Quotes, dashes (<kbd>--</kbd>) and ellipses (<kbd>...</kbd>) turn into proper typography as you type.' },
+    { sel: '.inspector', prep: () => gInsp('details'), title: 'The inspector', text: 'Everything <i>about</i> the open document: its synopsis, status, point of view and characters, plus private notes, comments, history, the Polish style check and Assist.' },
+    { sel: '#statusbar', title: 'Progress and saving', text: 'Word counts for this document, the manuscript and today. On the right you can see where your work is saved; click it for backups and saving to a file.' },
+    { sel: '#b-goals', title: 'Goals', text: 'Set a target and deadline and Folio works out a daily goal that adjusts as you go. You also get a writing streak and history.' },
+    { sel: '#b-export', title: 'Export', text: 'One dialog gives you a submission-ready Word manuscript, an ePub, a PDF and more, with a live preview.' },
+    { sel: '#b-help', alt: '#b-more', title: 'Come back any time', text: 'This guide is always one click away: the <b>?</b> button, <b>More › Guide and tutorial</b>, or <kbd>F1</kbd>. Each chapter has its own “Show me” tour.' },
+  ],
+  binder: [
+    { sel: '.binder', prep: () => { gDoc(); gBinder(); }, title: 'The binder', text: 'Folders are chapters (or parts); documents inside them are scenes. Click the arrow beside a folder to open or close it.' },
+    { sel: () => $('#tree .row.sel') || $('#tree .row'), title: 'Right-click anything', text: 'Right-click an item to add, rename, duplicate, open it in split view, or move it to the trash. Drag items to reorder them or move them into another folder.' },
+    { sel: '.binder-f', title: 'Add and import', text: 'New document (<kbd>Alt N</kbd>), new folder, and import Word, text or Markdown files. New items go into whatever folder you’re in.' },
+    { sel: '#binder-filter', title: 'Filter', text: 'Type here to find any document by its title or synopsis.' },
+  ],
+  write: [
+    { sel: '.paper', prep: gDoc, title: 'Write here', text: 'Each document is one page. Press Enter for a new paragraph; first-line indents are added for you, the way novels are typeset.' },
+    { sel: () => $('#toolbar select'), title: 'Styles', text: 'Use <b>Normal text</b> for prose. Headings are for notes and research; chapter titles come from your folder names when you export.' },
+    { sel: () => $('#toolbar [title="Insert scene break"]'), title: 'Scene breaks', text: 'Inserts a scene break. It exports as <b>#</b> in manuscript format or <b>* * *</b> in reader copies. (Most writers use one document per scene instead.)' },
+    { sel: () => $('#toolbar [title^="Comment"]'), title: 'Comments', text: 'Select some text and click this (or press <kbd>Ctrl Alt M</kbd>) to leave yourself a margin note. Comments never appear in exports.' },
+    { sel: () => $('#toolbar [title^="Take a snapshot"]'), title: 'Snapshots', text: 'Saves a copy of this document before a big rewrite, so you can compare or roll back later.' },
+  ],
+  plan: [
+    { prep: () => gFolder('cork'), sel: '#center', title: 'Corkboard', text: 'Each card is a scene: title on top, synopsis below. Edit cards right here, and drag them to reorder the actual manuscript.' },
+    { prep: () => gFolder('outline'), sel: '#center', title: 'Outline', text: 'The same scenes as a table, with synopsis, status, label, point of view and word counts. It’s great for spotting gaps and pacing at a glance.' },
+    { prep: () => { if (S.focus) setFocus(false); setMode('map'); }, sel: '#center', title: 'Story map', text: 'Scenes run left to right. Click a cell to mark which plotlines and characters appear in that scene. The word bars show pacing.' },
+    { sel: '#viewseg', prep: () => gFolder('cork'), title: 'Switch any time', text: 'Each folder remembers whether you last used Corkboard or Outline. Click <b>Write</b> to read a whole folder as one continuous document.' },
+  ],
+  inspector: [
+    { sel: '#insp-tabs', prep: () => { gDoc(); gInsp('details'); }, title: 'Inspector tabs', text: 'Details, Notes, Comments, History, Polish and Assist. Every tab is about the document you have open.' },
+    { sel: '#insp-body', title: 'Details', text: 'The synopsis (also shown on the corkboard), status, label, point of view, characters in the scene, plotlines, a word target, and whether to include it in export.' },
+    { sel: gTab('Notes'), prep: () => gInsp('notes'), title: 'Notes', text: 'Private notes about this scene: things to fix, ideas, research links. They never appear in exports.' },
+    { sel: gTab('Comments'), prep: () => gInsp('comments'), title: 'Comments', text: 'All comments in this document. Click <b>Show</b> to jump to one, or <b>Resolve</b> when you’re done.' },
+  ],
+  revise: [
+    { sel: gTab('History'), prep: () => { gDoc(); gInsp('history'); }, title: 'History', text: 'Snapshots of this document. <b>Compare</b> shows exactly what changed; <b>Restore</b> rolls back (and snapshots the current version first, so nothing is lost).' },
+    { sel: gTab('Polish'), prep: () => gInsp('polish'), title: 'Polish', text: 'Highlights adverbs, passive voice, filter words, clichés, echoes and long sentences, and gives a readability score. It only highlights; it never changes your words. Turn categories on and off to focus each pass.' },
+    { sel: '#b-find', title: 'Find and replace', text: 'Search the current view, the manuscript or the whole project. Match case and whole words are optional. <b>Replace all</b> across the project takes snapshots first.' },
+    { sel: () => $('#toolbar [title^="Read aloud"]') || $('#b-more'), title: 'Read aloud', text: 'Hearing your prose is the best way to catch clunky rhythm and missing words. Press <kbd>Ctrl Shift U</kbd> and Folio reads from the cursor, highlighting each sentence.' },
+  ],
+  assist: [
+    { sel: gTab('Assist'), prep: () => { gDoc(); gInsp('assist'); }, title: 'Assist', text: 'Help that never writes your prose. Results stay in this panel until <i>you</i> choose to save them to notes or a synopsis.' },
+    { sel: () => $('#insp-body .btn') || $('#insp-body'), title: 'Story checks (no AI needed)', text: 'Finds misspelled character names, eye or hair colour that contradicts the character sheet, mismatched ages, untagged characters and missing synopses.' },
+    { sel: '#insp-body', title: 'Optional free AI', text: 'With Chrome’s built-in AI or Ollama, you can ask for synopsis drafts, editor’s questions, reader reactions and continuity checks. Without AI, “Questions” uses a deck of craft questions.' },
+  ],
+  goals: [
+    { sel: '#b-goals', prep: gDoc, title: 'Goals', text: 'Click here to set a manuscript target, a deadline or a fixed daily goal. With a deadline, the daily target recalculates each day from what’s left.' },
+    { sel: () => $('#statusbar .ring')?.parentElement, title: 'Today’s ring', text: 'Fills as you write today. Words you delete count against it, so revision days may show small or negative numbers; that’s normal.' },
+    { sel: '.st-prog', alt: '#statusbar', title: 'Manuscript progress', text: 'Total words in the manuscript against your target. Folders and documents excluded from export don’t count.' },
+  ],
+  workspace: [
+    { sel: '#b-focus', prep: gDoc, title: 'Focus mode', text: 'Hides everything but the page and goes full screen. <kbd>Esc</kbd> brings it all back. Settings can fade all but the current paragraph.' },
+    { sel: '#b-split', title: 'Split view', text: 'Shows a second document beside the one you’re writing, such as a character sheet, an outline or research. Right-click any binder item and choose “Open in split view”.' },
+    { sel: '#b-theme', title: 'Themes', text: 'Choose light, dark, sepia, or match your device’s setting.' },
+    { sel: '#b-more', title: 'More', text: 'Quick open (<kbd>Ctrl K</kbd>), project settings (fonts, page width, typewriter scrolling, labels, plotlines), keyboard shortcuts, backups and more.' },
+  ],
+  export: [
+    { sel: '#b-export', prep: gDoc, title: 'Export', text: 'Choose a format (Word, ePub, PDF, web page, Markdown or text) and a preset: <b>Standard manuscript</b> for agents and editors, <b>Reader copy</b> for beta readers, or <b>eBook</b>. The preview updates as you change options.' },
+    { sel: () => $('.binder-f [title^="Import"]') || $('#b-import'), prep: gBinder, title: 'Import', text: 'Bring in Word, text, Markdown or HTML files. Folio can turn headings into chapters and scene breaks into scenes.' },
+  ],
+  safety: [
+    { sel: '#st-save', prep: gDoc, title: 'Where your work is saved', text: 'It reads “Saved in browser” or “Saved to <i>yourfile</i>.folio”. Click it to save to a file on disk, download a backup, or restore one.' },
+    { sel: '#b-more', title: 'Backups and restore', text: 'Folio keeps a backup for each of the last 14 days you worked, plus your last 10 manual ones. Restoring opens a copy, so it never overwrites anything.' },
+  ],
+};
+
+/* ---------- tour engine ---------- */
+const TOUR = { steps: null, i: 0, el: null, back: null };
+async function startTour(name) {
+  const steps = TOURS[name]; if (!steps) return;
+  closeGuide(true); closeMenu();
+  if (!(await gEnsureProject())) return;
+  endTour();
+  TOUR.steps = steps; TOUR.i = 0; TOUR.name = name; TOUR.panes = { binder: PREFS.binder, insp: PREFS.insp };
+  TOUR.back = h('div', { class: 'tour-back', onclick: e => { if (e.target === TOUR.back) endTour(); } });
+  TOUR.hole = h('div', { class: 'tour-hole' });
+  TOUR.el = h('div', { class: 'tour-pop', role: 'dialog', 'aria-live': 'polite' });
+  document.body.append(TOUR.back, TOUR.hole, TOUR.el);
+  document.addEventListener('keydown', tourKey, true);
+  addEventListener('resize', placeTour);
+  showStep();
+}
+function tourKey(e) {
+  if (!TOUR.steps) return;
+  if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); endTour(); }
+  else if (e.key === 'ArrowRight' || e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); tourGo(1); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); e.stopPropagation(); tourGo(-1); }
+}
+function tourGo(d) {
+  const n = TOUR.i + d;
+  if (n >= TOUR.steps.length) { const name = TOUR.name; endTour(); markRead(name); return; }
+  if (n < 0) return;
+  TOUR.i = n; showStep();
+}
+function tourTarget(st) {
+  const find = s => { if (!s) return null; const el = typeof s === 'function' ? s() : $(s); if (!el) return null; const r = el.getBoundingClientRect(); return r.width > 2 && r.height > 2 && getComputedStyle(el).visibility !== 'hidden' ? el : null; };
+  return find(st.sel) || find(st.alt);
+}
+function showStep() {
+  const st = TOUR.steps[TOUR.i];
+  try { st.prep && st.prep(); } catch (e) { console.warn(e); }
+  const last = TOUR.i === TOUR.steps.length - 1;
+  TOUR.el.textContent = '';
+  TOUR.el.append(
+    h('div', { class: 'tour-count' }, `${TOUR.i + 1} of ${TOUR.steps.length}`),
+    h('h3', {}, st.title),
+    h('div', { class: 'tour-text', html: st.text }),
+    h('div', { class: 'tour-f' },
+      h('button', { class: 'link-btn', onclick: endTour }, 'End tour'), h('span', { class: 'spacer' }),
+      TOUR.i ? h('button', { class: 'btn sm', onclick: () => tourGo(-1) }, 'Back') : null,
+      h('button', { class: 'btn sm primary', onclick: () => tourGo(1) }, last ? 'Finish' : 'Next')));
+  requestAnimationFrame(() => requestAnimationFrame(placeTour));
+  setTimeout(() => TOUR.el && TOUR.el.querySelector('.btn.primary')?.focus({ preventScroll: true }), 30);
+}
+function placeTour() {
+  if (!TOUR.steps) return;
+  const st = TOUR.steps[TOUR.i]; const el = tourTarget(st);
+  const pop = TOUR.el, hole = TOUR.hole, vw = innerWidth, vh = innerHeight, pad = 6;
+  pop.style.maxWidth = Math.min(340, vw - 24) + 'px';
+  if (!el) {
+    hole.style.cssText = 'left:50%;top:50%;width:0;height:0';
+    pop.style.left = Math.max(12, (vw - pop.offsetWidth) / 2) + 'px'; pop.style.top = Math.max(12, (vh - pop.offsetHeight) / 2) + 'px';
+    return;
+  }
+  el.scrollIntoView && el.getBoundingClientRect().bottom > vh && el.scrollIntoView({ block: 'nearest' });
+  const r = el.getBoundingClientRect();
+  const R = { l: Math.max(4, r.left - pad), t: Math.max(4, r.top - pad), r: Math.min(vw - 4, r.right + pad), b: Math.min(vh - 4, r.bottom + pad) };
+  hole.style.cssText = `left:${R.l}px;top:${R.t}px;width:${R.r - R.l}px;height:${R.b - R.t}px`;
+  const pw = pop.offsetWidth, ph = pop.offsetHeight, gap = 12;
+  let x, y;
+  if (vh - R.b >= ph + gap) { y = R.b + gap; x = (R.l + R.r) / 2 - pw / 2; }            // below
+  else if (R.t >= ph + gap) { y = R.t - ph - gap; x = (R.l + R.r) / 2 - pw / 2; }      // above
+  else if (vw - R.r >= pw + gap) { x = R.r + gap; y = (R.t + R.b) / 2 - ph / 2; }      // right
+  else if (R.l >= pw + gap) { x = R.l - pw - gap; y = (R.t + R.b) / 2 - ph / 2; }      // left
+  else { x = (vw - pw) / 2; y = vh - ph - 16; }                                         // overlap, bottom
+  pop.style.left = Math.max(12, Math.min(vw - pw - 12, x)) + 'px';
+  pop.style.top = Math.max(12, Math.min(vh - ph - 12, y)) + 'px';
+}
+function endTour() {
+  if (!TOUR.steps) return;
+  TOUR.steps = null; [TOUR.back, TOUR.hole, TOUR.el].forEach(e => e && e.remove());
+  document.removeEventListener('keydown', tourKey, true); removeEventListener('resize', placeTour);
+  // Put the binder and inspector back the way they were (they overlay the page on small screens).
+  if (TOUR.panes && S.p && (PREFS.binder !== TOUR.panes.binder || PREFS.insp !== TOUR.panes.insp)) { Object.assign(PREFS, TOUR.panes); savePrefs(); buildChrome(); }
+  TOUR.panes = null;
+}
+
+/* ---------- guide content ---------- */
+const K = s => s.split(' ').map(k => `<kbd>${k}</kbd>`).join(' ');
+const GUIDE = [
+  { id: 'start', icon: 'book', title: 'Start here', tour: 'welcome', sum: 'How Folio is laid out and your first ten minutes.', sections: [
+    { h: 'The big idea', b: `<p>Folio breaks a long piece of writing into small, movable pieces. Instead of one 90,000-word file, a novel is a set of <b>scenes</b> grouped into <b>chapters</b>. That makes it easy to:</p>
+      <ul><li>find anything in seconds,</li><li>move a scene to a different chapter by dragging it,</li><li>see the shape of the whole book on index cards,</li><li>track progress scene by scene.</li></ul>
+      <p>When you export, Folio stitches everything back together into one properly formatted manuscript.</p>` },
+    { h: 'The screen', b: `<ul><li><b>Binder</b> (left): every chapter, scene, character, place and note.</li>
+      <li><b>Centre</b>: the page, corkboard, outline or story map.</li>
+      <li><b>Inspector</b> (right): details, notes, comments, history and tools for whatever is open.</li>
+      <li><b>Status bar</b> (bottom): word counts, today’s progress and where your work is saved.</li></ul>
+      <p>The buttons at the top left and top right show or hide the binder and inspector.</p>` },
+    { h: 'Your first ten minutes', b: `<ol><li>From the home screen, click <b>New project</b>. Choose <i>Short story</i>, <i>Novella</i> or <i>Novel</i> to start with a ready-made structure of chapters and story beats, or <i>Blank</i>.</li>
+      <li>Add your author name in <b>More › Project settings</b>. Export uses it for the title page and page headers.</li>
+      <li>Click a scene in the binder and start typing. There is no Save button to remember.</li>
+      <li>Choose <b>More › Save to a file on disk</b> so a copy lives in your Documents or Dropbox folder too. (See <i>Saving, backups and the app</i>.)</li>
+      <li>Set a goal with the <b>Goals</b> button if you like a target to aim for.</li></ol>`,
+      tip: 'The sample project, “The Keeper of Gull Rock”, is a safe place to experiment. Delete it from the home screen whenever you like.' },
+  ] },
+  { id: 'binder', icon: 'sidebar', title: 'The binder', tour: 'binder', sum: 'Organise chapters, scenes and everything else.', sections: [
+    { h: 'What goes where', b: `<ul><li><b>Manuscript</b>: the book itself. Only this section is exported.</li>
+      <li><b>Characters</b> and <b>Places</b>: sheets with ready-made fields (age, appearance, wants and needs, wound, arc, and so on).</li>
+      <li><b>Research</b> and <b>Notes</b>: anything else, such as research articles, worldbuilding, to-do lists or cut scenes.</li>
+      <li><b>Trash</b>: deleted items wait here until you empty it.</li></ul>` },
+    { h: 'Everyday tasks', b: `<ul><li><b>Add</b>: the <b>Doc</b> and <b>Folder</b> buttons at the bottom of the binder, or ${K('Alt N')}. New items go into the folder you’re working in.</li>
+      <li><b>Rename</b>: double-click a title, or select it and press ${K('F2')}.</li>
+      <li><b>Reorder</b>: drag an item above or below another, or onto a folder to put it inside.</li>
+      <li><b>More options</b>: right-click for Duplicate, Open in split view, Move to trash, and more.</li>
+      <li><b>Find</b>: type in <i>Filter binder</i> to search titles and synopses.</li></ul>` },
+    { h: 'Folders as chapters and parts', b: `<p>A folder in the Manuscript exports as a chapter heading by default. To change that, right-click the folder and choose <b>Export as</b> <i>Part</i> or <i>No heading</i>. A Part folder can contain chapter folders.</p>
+      <p>The coloured dot beside a scene shows its <b>label</b>. The small number shows its word count.</p>` , tip: 'One scene per document is the sweet spot. Small documents are easier to move, label and track than whole chapters.' },
+    { h: 'Leaving something out', b: `<p>Untick <b>Include in export</b> (Inspector › Details) to keep a scene in the binder but out of the manuscript. This is perfect for alternate versions or a scene you aren’t sure about. Cut material is better moved to Notes than deleted.</p>` },
+  ] },
+  { id: 'write', icon: 'pen', title: 'Writing and formatting', tour: 'write', sum: 'The editor, toolbar, smart punctuation and comments.', sections: [
+    { h: 'Typing', b: `<p>Folio formats prose the way books are set: first-line indents, no gaps between paragraphs, and curly quotes. (Prefer a blank line between paragraphs? Turn off indents in Project settings.) As you type:</p>
+      <ul><li><code>"</code> and <code>'</code> become “ ” and ‘ ’,</li><li><code>--</code> becomes an em dash —,</li><li><code>...</code> becomes an ellipsis …</li></ul>
+      <p>You can turn this off in <b>More › Project settings › Writing</b>.</p>` },
+    { h: 'The toolbar', b: `<p>It works as in Word or Google Docs: undo and redo, text style, font, size, bold, italic, underline, strikethrough, text colour, highlight, alignment, line spacing, lists and clear formatting.</p>
+      <p>Formatting you apply here (italics for emphasis, for example) carries through to export. Fonts and sizes are for <i>your</i> comfort; the export preset decides how the manuscript looks.</p>`,
+      tip: 'Don’t format your manuscript by hand for submission. Write in whatever font you enjoy, and let Export produce standard manuscript format.' },
+    { h: 'Scene breaks', b: `<p>The scene-break button inserts a break inside a document. It exports as <b>#</b> in manuscript format or <b>* * *</b> in reader and eBook copies. Separate documents inside a chapter folder also get a scene break between them automatically.</p>` },
+    { h: 'Comments', b: `<p>Select text and press ${K('Ctrl Alt M')} (or the speech-bubble button) to attach a note. The text is highlighted, and the comment appears in <b>Inspector › Comments</b>. Click <b>Show</b> on a comment to jump to it, and <b>Resolve</b> when it’s dealt with. Comments are never exported.</p>` },
+    { h: 'Reading a whole chapter', b: `<p>Select a folder and choose <b>Write</b> to see all its scenes as one continuous document. You can edit right there, and each part still saves to its own scene.</p>` },
+    { h: 'Comfort settings', b: `<p>In <b>More › Project settings › Writing</b> you can change the editor font (including Atkinson Hyperlegible, which is designed for readability), text size, line height, page width, book-style indents or spaced paragraphs, paper-on-a-desk view, typewriter scrolling and spell check. The zoom menu is at the bottom right.</p>` },
+  ] },
+  { id: 'plan', icon: 'grid', title: 'Planning: corkboard, outline, story map', tour: 'plan', sum: 'See the shape of your story and move it around.', sections: [
+    { h: 'Corkboard', b: `<p>Select a folder (or the Manuscript) and choose <b>Corkboard</b>. Each scene is an index card with its title and synopsis. Edit cards directly, drag them to reorder the real manuscript, and click <b>New card</b> to plan scenes you haven’t written yet. <b>Read &amp; edit all</b> opens the whole folder as one document.</p>`,
+      tip: 'Plotters: fill the corkboard with one-line synopses before you draft. Pantsers: write first, then summarise each scene on its card afterwards. It’s the fastest way to see what you actually wrote.' },
+    { h: 'Outline', b: `<p>The same scenes as a table, with synopsis, status, label, point of view, words and word target. Use it to check pacing (are some scenes much longer than others?) and to update many scenes quickly.</p>` },
+    { h: 'Story map', b: `<p>Every scene in order, left to right. Mark which <b>plotlines</b> and <b>characters</b> appear in each one. Gaps jump out: a subplot that disappears for ten chapters, or a character missing from the middle of the book. Manage plotlines and their colours in <b>Project settings › Labels and plotlines</b>.</p>` },
+    { h: 'Status and labels', b: `<p><b>Status</b> tracks where a scene is in your process (To do, First draft, Revised, Final). <b>Labels</b> are yours to define: use them for POV characters, timelines or plot threads. Both show in the binder, on cards and in the outline.</p>` },
+  ] },
+  { id: 'inspector', icon: 'panel', title: 'The inspector', tour: 'inspector', sum: 'Synopsis, status, notes and comments for each scene.', sections: [
+    { h: 'Details', b: `<ul><li><b>Synopsis</b>: one or two sentences on what happens and why it matters. It appears on the corkboard and outline, and can be exported.</li>
+      <li><b>Status</b>, <b>Label</b> and <b>Point of view</b>.</li>
+      <li><b>Characters in this scene</b> and <b>Plotlines</b>, which feed the story map and Assist’s continuity checks.</li>
+      <li><b>Word target</b> for this scene, with a progress bar.</li>
+      <li><b>Include in export</b>.</li></ul>` },
+    { h: 'Notes', b: `<p>A private scratchpad for each document: revision to-dos, research links, ideas. Notes are never exported.</p>` },
+    { h: 'Comments, History, Polish and Assist', b: `<p>These are covered in their own chapters: <i>Writing and formatting</i> (comments), <i>Revising</i> (history and Polish) and <i>Assist</i>.</p>` },
+  ] },
+  { id: 'bible', icon: 'user', title: 'Characters, places and research', sum: 'Your story bible, always one click away.', sections: [
+    { h: 'Character sheets', b: `<p>Add a character in the <b>Characters</b> section. Each sheet has fields for role, age, occupation, appearance, personality, wants (outer goal), needs (inner truth), fear or old wound, flaw, arc, voice and backstory. Fill in only what helps you.</p>
+      <p>Details like eye colour, hair and age matter beyond reference: Assist’s <b>Story checks</b> compare them against what your scenes say, and flag contradictions.</p>` },
+    { h: 'Places', b: `<p>Place sheets cover the kind of place, time period, what it looks like, its sounds and smells, mood, who goes there, and why it matters to the story. These are handy for keeping a setting consistent over a long book.</p>` },
+    { h: 'Keeping them beside you', b: `<p>Right-click a character or place and choose <b>Open in split view</b> to keep the sheet open next to the scene you’re writing.</p>`, tip: 'Tag the characters in each scene (Inspector › Details). It takes two seconds and powers the story map and continuity checks.' },
+  ] },
+  { id: 'revise', icon: 'history', title: 'Revising', tour: 'revise', sum: 'Snapshots, Polish, find and replace, read aloud.', sections: [
+    { h: 'Snapshots and history', b: `<p>A snapshot is a saved copy of one document. Folio takes one automatically the first time you edit a document each day. Take your own with the camera button or ${K('Ctrl Shift S')} before any big rewrite.</p>
+      <p>In <b>Inspector › History</b>, <b>Compare</b> highlights what was added and removed. <b>Restore</b> rolls back, but snapshots the current version first, so you can always change your mind.</p>`,
+      tip: 'Rewrite boldly. With a snapshot taken, the old version is one click away, so you never need “chapter3_v2_FINAL_real.docx” again.' },
+    { h: 'Polish (style check)', b: `<p>Open <b>Inspector › Polish</b> to highlight adverbs, passive voice, filter words (saw, heard, felt), hedges (very, just, really), clichés, showy dialogue tags, long sentences and echoes (the same word repeated close together). It also shows a readability score and grade level.</p>
+      <p>Polish only highlights. It never changes your words, and plenty of what it flags is fine on purpose.</p>`,
+      tip: 'Don’t run Polish while drafting; it pulls you out of the story. Use it in revision, and do one category per pass: adverbs only, then echoes only. That’s much less overwhelming than everything at once.' },
+    { h: 'Find and replace', b: `<p>${K('Ctrl F')} to find, ${K('Ctrl H')} to replace. Search the current view, the manuscript or the whole project, with <b>Match case</b> and <b>Whole words</b> options. <b>Replace all</b> is a single undo, and across the project Folio takes snapshots first. Search results are highlighted in place.</p>` },
+    { h: 'Read aloud', b: `<p>Put the cursor where you want to start and press ${K('Ctrl Shift U')} (or the speaker button). Folio reads sentence by sentence, highlighting as it goes. Change the voice and speed in the control bar. Start typing at any time and it stops so you can fix something.</p>`,
+      tip: 'Listening catches what reading doesn’t: missing words, repeated words, clunky rhythm and dialogue that nobody would really say.' },
+  ] },
+  { id: 'assist', icon: 'bulb', title: 'Assist (help that stays out of your prose)', tour: 'assist', sum: 'Story checks and optional free AI.', sections: [
+    { h: 'The promise', b: `<p>Assist never writes your story. Nothing it produces goes into your manuscript. Results stay in the panel until you choose <b>Add to notes</b> or <b>Use as synopsis</b>. Nothing is sent to the internet, and nothing costs money.</p>` },
+    { h: 'Story checks (no AI)', b: `<p>Click <b>Check the whole manuscript</b> to look for:</p><ul><li>names that look like misspellings of a character (<i>Marren</i> for <i>Maren</i>),</li><li>eye or hair colour that contradicts the character sheet or another scene,</li><li>ages that don’t match,</li><li>characters who appear but aren’t tagged (with a one-click fix),</li><li>characters who are tagged but never mentioned,</li><li>scenes with no synopsis or point of view.</li></ul>` },
+    { h: 'With a free AI (optional)', b: `<p>Turn one on under <b>Assist › AI engine</b>:</p><ul><li><b>Chrome’s built-in AI</b>: a one-time download, then it runs on your computer. Needs desktop Chrome on a fairly powerful machine.</li><li><b>Ollama</b> (any browser): install it free from ollama.com. Setup steps are shown in the Assist tab.</li></ul>
+      <p>Then you can ask for a synopsis draft, editor-style questions about the scene, reader reactions, “what if” ideas, a continuity check against your character sheets, or ask anything about your story.</p>`,
+      tip: 'The best use is as a sounding board when you’re stuck. Ask “What does the reader not know yet at this point?” rather than “What should happen next?”. Its questions spark your own ideas.' },
+    { h: 'Without any AI', b: `<p><b>Questions</b> draws from a built-in deck of craft questions about stakes, desire, conflict and change. <b>Synopsis</b> builds a summary from your own sentences.</p>` },
+  ] },
+  { id: 'goals', icon: 'target', title: 'Goals and habits', tour: 'goals', sum: 'Targets, deadlines, streaks and history.', sections: [
+    { h: 'Setting goals', b: `<p>Click <b>Goals</b> to set:</p><ul><li>a <b>manuscript target</b> (for example 80,000 words),</li><li>an optional <b>deadline</b>: Folio divides the remaining words by the days left, so your daily target adjusts as you go,</li><li>or a fixed <b>daily goal</b> instead.</li></ul><p>Each scene can also have its own target (Inspector › Details).</p>` },
+    { h: 'Tracking', b: `<p>The ring in the status bar fills as you write today. The Goals window shows your streak and a 30-day chart. Deleting words reduces today’s count, so heavy revision days can look small. That’s expected; revision is real work.</p>`,
+      tip: 'Set a daily goal small enough that you’d be embarrassed to miss it. A streak of 300-word days beats occasional 3,000-word binges.' },
+  ] },
+  { id: 'workspace', icon: 'focus', title: 'Your workspace', tour: 'workspace', sum: 'Focus mode, split view, themes and quick open.', sections: [
+    { h: 'Focus mode', b: `<p>${K('Ctrl Shift F')} or the <b>Focus</b> button hides everything but the page and goes full screen. A small word count shows at the bottom. Press ${K('Esc')} to return. In settings you can fade every paragraph except the one you’re writing, and turn on typewriter scrolling so the line you’re typing stays mid-screen.</p>` },
+    { h: 'Split view', b: `<p>Shows a second document on the right: a character sheet, an outline or the previous chapter. Use the split button at the top, or right-click a binder item and choose <b>Open in split view</b>. You can edit both. If the same document is open on both sides, the right one is read-only to keep things safe.</p>` },
+    { h: 'Quick open', b: `<p>${K('Ctrl K')}, then type part of any title and press Enter. It’s the fastest way around a big project.</p>` },
+    { h: 'Themes and comfort', b: `<p>The moon button lets you choose light, dark, sepia, or match your device. Zoom is at the bottom right. Show or hide the binder and inspector with the buttons at either end of the top bar.</p>` },
+  ] },
+  { id: 'export', icon: 'download', title: 'Export and import', tour: 'export', sum: 'Submission-ready manuscripts, eBooks and importing old work.', sections: [
+    { h: 'Exporting', b: `<p>Click <b>Export</b> (${K('Ctrl Shift E')}). Pick a <b>format</b> and a <b>preset</b>, then check the live preview:</p>
+      <ul><li><b>Standard manuscript</b>: what agents, editors and contests expect. Title page with contact details and word count, Times New Roman 12pt, double spaced, surname / title / page number header, <b>#</b> scene breaks, chapters on new pages.</li>
+      <li><b>Reader copy</b>: book-style, for beta readers or printing.</li>
+      <li><b>eBook</b>: clean styles that e-readers can reflow.</li></ul>
+      <p>Formats: Word (.docx, which also opens in Pages and Google Docs), ePub (Kindle, Apple Books, Kobo), PDF via print, web page, Markdown and plain text.</p>`,
+      tip: 'Fill in your author name and contact block in Project settings first. Standard manuscript format puts them on the title page.' },
+    { h: 'Choosing what’s included', b: `<p>Only the Manuscript is exported, and only items with <b>Include in export</b> ticked. Comments and notes never are. Synopses can be added (useful for a synopsis document for agents).</p>` },
+    { h: 'Importing', b: `<p>Use the import button at the bottom of the binder (or <b>More › Import documents</b>) to bring in .docx, .txt, .md or .html files. Folio can split a long file so headings become chapters and scene breaks (<code>#</code> or <code>***</code>) become scenes, so an existing novel in Word can become a structured project in one step.</p>` },
+  ] },
+  { id: 'safety', icon: 'shield', title: 'Saving, backups and the app', tour: 'safety', sum: 'Where your work lives and how to keep it safe.', sections: [
+    { h: 'How saving works', b: `<p>Folio saves to your browser half a second after you stop typing. The status bar shows where: <b>Saved in browser</b>, or <b>Saved to <i>name</i>.folio</b> once you’ve linked a file. ${K('Ctrl S')} saves immediately, but you never need it.</p>` },
+    { h: 'Save to a file (strongly recommended)', b: `<p><b>More › Save to a file on disk</b> (Chrome and Edge) links the project to a <code>.folio</code> file. After that, every change also saves to that file. Put it in Dropbox, OneDrive, Google Drive or iCloud and it’s backed up off your computer automatically.</p>
+      <p>If the browser asks for permission again after a restart, click <b>Allow saving to file</b> in the yellow bar.</p>`,
+      tip: 'Do this on day one of every project. Browser storage is safe day to day, but clearing your browsing data would erase it. Your .folio file is the copy you control.' },
+    { h: 'Backups and restore', b: `<p>Folio keeps a backup for each of the last 14 days you worked on a project, plus your last 10 manual backups. Open <b>More › Backups and restore</b> (${K('Ctrl Alt Shift B')}). Restoring opens the backup as a separate project, so it never overwrites your current work. <b>Download backup</b> saves a .folio copy in any browser.</p>` },
+    { h: 'The installed app', b: `<p>Installed Folio has its own window and icon, works with no internet, and opens <code>.folio</code> files when you double-click them (Chrome and Edge). When a new version is available you’ll see <b>A new version of Folio is ready</b>; click <b>Update now</b>, and your work is saved before it reloads.</p>` },
+    { h: 'Moving between computers or browsers', b: `<p>Each browser keeps its own storage. To move a project, either keep it as a linked .folio file in a synced folder and open it from the other computer (<b>Open a .folio file</b> on the home screen), or use <b>Download backup</b> and open that file on the other side.</p>` },
+  ] },
+  { id: 'workflows', icon: 'list', title: 'Suggested workflows', sum: 'Proven ways to use Folio for each length of story.', sections: [
+    { h: 'Short story (1,000–7,500 words)', b: `<ol><li>New project › <i>Short story</i>. It starts with four beats: Opening, Complication, Crisis, Resolution, each with a hint on its card.</li><li>Write a one-line synopsis on each card, or skip straight to drafting.</li><li>Draft in one or two sittings in focus mode.</li><li>Rest it for a day, then read it aloud.</li><li>One Polish pass for echoes and filter words.</li><li>Export › Word › Standard manuscript, and submit.</li></ol>` },
+    { h: 'Novella (17,500–40,000 words)', b: `<ol><li>New project › <i>Novella</i>, which starts with nine chapters, each holding one story beat (Setup, Inciting incident, Midpoint turn, and so on).</li><li>Fill in character sheets for the two or three main characters.</li><li>Corkboard: one card per scene with a synopsis.</li><li>Set a deadline in Goals and let the daily target guide you.</li><li>Draft scene by scene. Mark status <i>First draft</i> as each one is done, and the corkboard becomes a progress map.</li><li>Revise using the Revising chapter’s routine.</li></ol>` },
+    { h: 'Novel (60,000+ words)', b: `<ol><li>New project › <i>Novel</i>, which starts with three acts (as Part folders) and chapters for each classic story beat.</li><li>Define plotlines in Project settings and labels for your POV characters.</li><li>Outline on the corkboard at whatever level of detail suits you.</li><li>Draft with a daily goal. Use split view to keep the outline or a character sheet beside you.</li><li>Tag characters in each scene, then check the story map for dropped threads.</li><li>Run Assist › Story checks on the whole manuscript before revising.</li><li>Revise in passes: structure (corkboard and story map), then scenes, then lines (Polish, read aloud).</li></ol>` },
+    { h: 'A revision routine that works', b: `<ol><li><b>Snapshot first</b>: ${K('Ctrl Shift S')}.</li><li><b>Big picture</b>: read the corkboard top to bottom. Does every scene change something? Merge, cut or move.</li><li><b>Scene level</b>: for each scene, check its synopsis against what’s on the page, and use Assist › Questions when stuck.</li><li><b>Line level</b>: Polish one category at a time, then read aloud.</li><li><b>Consistency</b>: run Story checks.</li><li><b>Compare</b> with the snapshot to see how far you’ve come.</li></ol>` },
+  ] },
+  { id: 'keys', icon: 'keyboard', title: 'Keyboard shortcuts', sum: 'Every shortcut in one place.', keys: true, sections: [] },
+  { id: 'faq', icon: 'help', title: 'Questions and troubleshooting', sum: 'Quick answers to common problems.', sections: [
+    { h: 'My project isn’t on the home screen', b: `<p>Projects live in the browser where you made them. If you switched browsers, used the downloaded Folio.html instead of the installed app (or the other way round), or cleared browsing data, use <b>Open a .folio file</b> with your linked file or a downloaded backup. Also check <b>More › Backups and restore</b>, which lists the automatic daily backups.</p>` },
+    { h: 'It says “Allow saving to file”', b: `<p>Browsers ask again for permission to write to a file after a restart. Click the button once and saving to the file resumes. Your work was still being saved in the browser meanwhile.</p>` },
+    { h: 'Spell check isn’t underlining anything', b: `<p>Spell check uses your browser’s own dictionary. Make sure it’s on in <b>Project settings › Writing</b> and in your browser’s settings (in Chrome: Settings › Languages › Spell check).</p>` },
+    { h: 'Read aloud has no voices or sounds robotic', b: `<p>Voices come from your computer. Windows, macOS, iOS and Android include several, and you can add more in your system’s speech or accessibility settings. Edge offers especially natural-sounding voices.</p>` },
+    { h: 'The AI options say “not set up”', b: `<p>That’s fine: AI is optional, and Story checks, Questions and Synopsis all work without it. To turn it on, see the <i>Assist</i> chapter. Chrome’s built-in AI needs desktop Chrome on a fairly powerful computer. Ollama works in any browser once installed.</p>` },
+    { h: 'Exported Word file looks different from my screen', b: `<p>That’s by design: export applies the preset’s formatting (for example Times New Roman, double spaced) whatever font you write in. Choose another preset, or adjust the options in the Export dialog.</p>` },
+  ] },
+];
+
+/* ---------- guide panel ---------- */
+const GUIDE_STATE = { el: null, ch: null, q: '' };
+function guideRead() { return (PREFS.guideRead = PREFS.guideRead || {}); }
+function markRead(id) { const tourCh = GUIDE.find(c => c.tour === id); const k = tourCh ? tourCh.id : id; if (!guideRead()[k]) { guideRead()[k] = 1; savePrefs(); if (GUIDE_STATE.el) drawGuide(); } }
+
+function openGuide(ch) {
+  closeMenu();
+  if (!GUIDE_STATE.el) {
+    GUIDE_STATE.el = h('aside', { class: 'guide', id: 'guide', role: 'complementary', 'aria-label': 'Folio guide' });
+    document.body.append(GUIDE_STATE.el);
+    document.body.classList.add('guide-open');
+  }
+  GUIDE_STATE.ch = ch === undefined ? (PREFS.guideCh || null) : ch;
+  GUIDE_STATE.q = '';
+  drawGuide();
+  setTimeout(() => GUIDE_STATE.el && GUIDE_STATE.el.querySelector('.guide-search')?.focus({ preventScroll: true }), 30);
+}
+function closeGuide(keepPlace) {
+  if (!GUIDE_STATE.el) return;
+  GUIDE_STATE.el.remove(); GUIDE_STATE.el = null; document.body.classList.remove('guide-open');
+  if (!keepPlace) { PREFS.guideCh = GUIDE_STATE.ch; savePrefs(); }
+}
+function toggleGuide() { GUIDE_STATE.el ? closeGuide() : openGuide(); }
+
+function guideSectionsText(c) { return c.sections.map(s => s.h + ' ' + s.b.replace(/<[^>]+>/g, ' ') + ' ' + (s.tip || '')).join(' '); }
+
+function drawGuide() {
+  const g = GUIDE_STATE.el; if (!g) return;
+  const scroll = g.querySelector('.guide-body')?.scrollTop || 0; const keepScroll = g.dataset.ch === String(GUIDE_STATE.ch) && !GUIDE_STATE.q;
+  g.textContent = ''; g.dataset.ch = String(GUIDE_STATE.ch);
+  const read = guideRead(); const nRead = GUIDE.filter(c => read[c.id]).length;
+  const search = h('input', { class: 'inp guide-search', type: 'search', placeholder: 'Search the guide', 'aria-label': 'Search the guide', value: GUIDE_STATE.q,
+    oninput: e => { GUIDE_STATE.q = e.target.value; drawGuideBody(); } });
+  g.append(h('div', { class: 'guide-h' },
+    h('div', { class: 'guide-title' }, icon('help', 18), h('b', {}, 'Folio guide'), h('span', { class: 'spacer' }),
+      h('button', { class: 'icon-btn', title: 'Close guide (F1)', 'aria-label': 'Close guide', onclick: () => closeGuide() }, icon('x'))),
+    search));
+  const body = h('div', { class: 'guide-body' }); g.append(body);
+  GUIDE_STATE.body = body;
+  drawGuideBody(nRead);
+  if (keepScroll) body.scrollTop = scroll;
+}
+
+function drawGuideBody() {
+  const body = GUIDE_STATE.body; if (!body) return; body.textContent = ''; body.scrollTop = 0;
+  const read = guideRead(); const q = GUIDE_STATE.q.trim().toLowerCase();
+  const go = id => { GUIDE_STATE.ch = id; GUIDE_STATE.q = ''; PREFS.guideCh = id; savePrefs(); drawGuide(); GUIDE_STATE.body.scrollTop = 0; };
+
+  if (q) {
+    const hits = [];
+    for (const c of GUIDE) {
+      if (c.keys) { for (const [k, d] of SHORTCUTS) if ((k + ' ' + d).toLowerCase().includes(q)) hits.push({ c, h: d, snip: k }); continue; }
+      for (const s of c.sections) {
+        const txt = (s.h + ' ' + s.b.replace(/<[^>]+>/g, ' ') + ' ' + (s.tip || '')).replace(/\s+/g, ' ');
+        const i = txt.toLowerCase().indexOf(q);
+        if (i >= 0) hits.push({ c, h: s.h, snip: (i > 40 ? '…' : '') + txt.slice(Math.max(0, i - 40), i + 90) + '…' });
+      }
+    }
+    body.append(h('div', { class: 'guide-kicker' }, hits.length ? `${hits.length} result${hits.length > 1 ? 's' : ''}` : 'No results. Try another word, such as “backup”, “chapter” or “export”.'));
+    for (const r of hits.slice(0, 40)) body.append(h('button', { class: 'guide-hit', onclick: () => { go(r.c.id); setTimeout(() => { const el = [...GUIDE_STATE.body.querySelectorAll('h3')].find(x => x.textContent === r.h); el && el.scrollIntoView({ block: 'start' }); }, 20); } },
+      h('span', { class: 'gh-ch' }, r.c.title), h('b', {}, r.h), h('span', { class: 'gh-snip' }, r.snip)));
+    return;
+  }
+
+  const c = GUIDE.find(x => x.id === GUIDE_STATE.ch);
+  if (!c) {
+    // contents
+    const nRead = GUIDE.filter(x => read[x.id]).length;
+    body.append(
+      h('div', { class: 'guide-hero' },
+        h('h2', {}, 'Learn Folio'),
+        h('p', {}, 'Read a chapter, or click “Show me” to have Folio point at the real buttons. Keep this panel open while you try things; it stays out of the way of the page.'),
+        h('div', { class: 'guide-hero-acts' },
+          h('button', { class: 'btn primary', onclick: () => startTour('welcome') }, icon('play', 15), 'Take the 2-minute tour'),
+          h('span', { class: 'hint' }, `${nRead} of ${GUIDE.length} chapters read`))),
+    );
+    const list = h('div', { class: 'guide-toc' });
+    GUIDE.forEach((x, i) => list.append(h('button', { class: 'guide-toc-row' + (read[x.id] ? ' read' : ''), onclick: () => go(x.id) },
+      h('span', { class: 'gt-num' }, read[x.id] ? icon('check', 14) : String(i + 1)),
+      h('span', { class: 'gt-text' }, h('b', {}, x.title), h('span', {}, x.sum)),
+      icon('chev', 15))));
+    body.append(list);
+    return;
+  }
+
+  const idx = GUIDE.indexOf(c);
+  body.append(h('button', { class: 'link-btn guide-back', onclick: () => go(null) }, '‹ All chapters'));
+  body.append(h('div', { class: 'guide-ch-h' }, h('span', { class: 'guide-kicker' }, `Chapter ${idx + 1} of ${GUIDE.length}`), h('h2', {}, c.title), h('p', {}, c.sum)));
+  if (c.tour) body.append(h('button', { class: 'btn sm primary guide-show', onclick: () => startTour(c.tour) }, icon('play', 14), 'Show me on screen'));
+  if (c.keys) {
+    body.append(h('div', { class: 'kbd-list guide-keys' }, SHORTCUTS.map(([k, d]) => [h('span', {}, k.split(' / ').map((x, i) => [i ? ' / ' : '', h('kbd', {}, fixMod(x))])), h('span', {}, d)])));
+  }
+  for (const s of c.sections) {
+    const sec = h('section', { class: 'guide-sec' }, h('h3', {}, s.h), h('div', { class: 'guide-text', html: s.b.replace(/<kbd>Ctrl/g, '<kbd>' + modKey()) }));
+    if (s.tip) sec.append(h('div', { class: 'guide-tip' }, h('b', {}, 'Tip'), h('span', {}, s.tip)));
+    body.append(sec);
+  }
+  const prev = GUIDE[idx - 1], next = GUIDE[idx + 1];
+  body.append(h('div', { class: 'guide-nav' },
+    prev ? h('button', { class: 'btn sm', onclick: () => go(prev.id) }, '‹ ' + prev.title) : h('span'),
+    next ? h('button', { class: 'btn sm primary', onclick: () => go(next.id) }, next.title + ' ›') : h('button', { class: 'btn sm', onclick: () => go(null) }, 'All chapters')));
+  if (!read[c.id]) { read[c.id] = 1; savePrefs(); }
+}
+function modKey() { return /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘' : 'Ctrl'; }
+function fixMod(s) { return s.replace(/Ctrl/g, modKey()); }
+
+/* ---------- first-run welcome ---------- */
+function maybeWelcome() {
+  if (PREFS.welcomed) return;
+  PREFS.welcomed = 1; savePrefs();
+  setTimeout(() => {
+    if (TOUR.steps || document.querySelector('.modal-back')) return;
+    modal({ title: 'Welcome to Folio', body: h('div', { class: 'welcome' },
+      h('p', {}, 'Folio is a writing studio for short stories, novellas and novels. A sample story is open so you can explore safely.'),
+      h('p', {}, 'Would you like a quick tour? It takes about two minutes, and the full guide is always available from the ', h('b', {}, '?'), ' button or ', h('kbd', {}, 'F1'), '.')),
+      actions: [{ label: 'Not now', onClick: () => toast('The guide is under the ? button whenever you want it.', 3500) }, { label: 'Open the guide', onClick: () => openGuide(null) }, { label: 'Take the tour', primary: true, onClick: () => startTour('welcome') }] });
+  }, 600);
 }
 
 /* =========================================================
