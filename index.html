@@ -636,6 +636,17 @@ body.quiet .topbar,body.quiet .toolbar,body.quiet .binder,body.quiet .inspector,
 body.quiet .cel{opacity:1}
 @media (prefers-reduced-motion:reduce){.cel,.cel.out,.cel-art .rays,.ring.glow{animation:none}}
 
+/* chapter openings (editor) */
+.ed-host.opening .ed > p:first-child{text-indent:0}
+.ed-host.opening .ed > p:first-child::first-line{font-variant:small-caps;letter-spacing:.035em}
+.ed-host.op-dropcap .ed > p:first-child::first-letter{float:left;font-size:3.35em;line-height:.8;padding:.07em .09em 0 0;margin-top:.04em;color:var(--accent);font-weight:500}
+.ed-host.opening .ed.ProseMirror > p:first-child.is-empty::first-letter{float:none}
+/* chapter openings (export preview) */
+.pv-page .dc{float:left;font-size:3.3em;line-height:.82;padding:.06em .08em 0 0;margin-top:.02em}
+.pv-page .sc{font-variant:small-caps;letter-spacing:.04em}
+.pv-page p.opening{text-indent:0}
+.pv-page p.has-dc::after,.ed-host.op-dropcap .ed > p:first-child::after{content:"";display:block;clear:both}
+
 </style>
 </head>
 <body>
@@ -1263,7 +1274,7 @@ function add(p, parentId, it, index) {
 function baseProject({ title, author = '', template = 'blank', target = 0 }) {
   const p = { id: uid(), app: 'folio', format: 1, title, author, template, created: Date.now(), modified: Date.now(), items: {},
     settings: { target, deadline: '', daily: 500, font: 'Literata', size: 18, lh: 1.7, width: 720, indent: true, pageView: true, spellcheck: true,
-      smartQuotes: true, typewriter: false, focusDim: true, contact: '', surname: '' },
+      smartQuotes: true, typewriter: false, focusDim: true, contact: '', surname: '', openings: 'dropcap' },
     labels: clone(DEFAULT_LABELS), threads: clone(DEFAULT_THREADS), history: {}, lastOpen: null, lastBackup: 0 };
   mk(p, 'folder', 'Root', { id: 'root', kind: 'root' });
   for (const [id, [name]] of Object.entries(ROOTS)) add(p, 'root', mk(p, 'folder', name, { id, kind: 'root', open: id === 'manuscript' }));
@@ -1694,7 +1705,8 @@ function renderWrite(c, it, pane) {
   }
 }
 function lazyEditor(it, pane, ro, scroller) {
-  const ph = h('div', { class: 'ed-host ed-lazy' + (S.p.settings.indent ? '' : ' blocky') }, h('div', { class: 'ed', html: sanitizeHTML(it.content || '') }));
+  const op = S.p.settings.openings && S.p.settings.openings !== 'none' && openingIds().has(it.id) ? ' opening op-' + S.p.settings.openings : '';
+  const ph = h('div', { class: 'ed-host ed-lazy' + op + (S.p.settings.indent ? '' : ' blocky') }, h('div', { class: 'ed', html: sanitizeHTML(it.content || '') }));
   const entry = { it, pane, ro, ph };
   S.lazy = S.lazy || []; S.lazy.push(entry);
   if (!S.io && 'IntersectionObserver' in window) S.io = new IntersectionObserver(es => { for (const e of es) if (e.isIntersecting) { const l = S.lazy.find(x => x.ph === e.target); if (l) mountLazy(l); } }, { root: scroller, rootMargin: '1500px 0px' });
@@ -1712,7 +1724,8 @@ function mountAll(pane = 'main') { for (const l of [...(S.lazy || [])]) if (l.pa
 
 function makeEditor(it, pane = 'main', readOnly = false) {
   const st = S.p.settings;
-  const host = h('div', { class: 'ed-host' + (st.indent ? '' : ' blocky') + (S.focus && st.focusDim ? ' dim' : '') });
+  const op = st.openings && st.openings !== 'none' && openingIds().has(it.id) ? ' opening op-' + st.openings : '';
+  const host = h('div', { class: 'ed-host' + op + (st.indent ? '' : ' blocky') + (S.focus && st.focusDim ? ' dim' : '') });
   let dom;
   const editor = new TT.Editor({
     element: host, content: it.content || '', editable: !readOnly, extensions: buildExtensions(),
@@ -2588,6 +2601,7 @@ function openSettings(section) {
     h('div', { class: 'row2' }, h('label', { class: 'fld' }, h('span', {}, 'Editor font'), h('select', { onchange: e => upd('font', e.target.value) }, FONTS.map(f => h('option', { value: f, selected: f === st.font }, f)))), num('Text size (px)', 'size', 12, 32, 1)),
     h('div', { class: 'row2' }, num('Line height', 'lh', 1, 2.6, 0.1), num('Page width (px)', 'width', 480, 1100, 20)),
     chk('Indent paragraphs (book style). Off = space between paragraphs.', 'indent', renderCenter),
+    choice('Chapter openings: how the first scene of each chapter begins', [['dropcap', 'Drop cap'], ['smallcaps', 'Small capitals'], ['none', 'Plain']], st.openings || 'dropcap', v => { upd('openings', v); renderCenter(); }),
     chk('Show the page as paper on a desk', 'pageView', renderCenter),
     chk('Smart quotes, em dashes (--) and ellipses (...)', 'smartQuotes'),
     chk('Typewriter scrolling: keep the line you are typing mid-screen', 'typewriter'),
@@ -3469,15 +3483,68 @@ const EXPORT_PRESETS = {
   reader: { name: 'Reader copy', blurb: 'Book-style for beta readers and printing', font: 'Georgia', size: 11, spacing: 1.3, indentAll: false, titlePage: true, header: false, chapterNewPage: true, sep: '* * *' },
   ebook: { name: 'eBook', blurb: 'Clean styles that e-readers can reflow', font: 'Georgia', size: 11, spacing: 1.4, indentAll: false, titlePage: true, header: false, chapterNewPage: true, sep: '* * *' },
 };
+/* ---------- chapter openings ----------
+   The first scene of each chapter (and of the manuscript) gets a drop cap and/or small capitals
+   on its opening words. openingIds() is shared with the editor so both agree. */
+function openingIds(includeOnly = false) {
+  const out = new Set(); let next = true;
+  const walk = id => {
+    for (const c of I(id).children) {
+      const it = I(c); if (!it || (includeOnly && it.include === false)) continue;
+      if (it.type === 'folder') { const k = it.kind || 'chapter'; if (k === 'chapter' || k === 'part') next = true; walk(c); }
+      else if (it.type === 'text') { if (next && htmlToText(it.content || '').trim()) { out.add(it.id); next = false; } }
+    }
+  };
+  if (I('manuscript')) walk('manuscript');
+  return out;
+}
+// Mark up the first paragraph inside a container element: <span class="dc"> for the drop cap,
+// <span class="sc"> around the opening words.
+function markOpening(root, mode, words = 4) {
+  if (!mode || mode === 'none') return;
+  const p = [...root.querySelectorAll('p')].find(e => e.textContent.trim() && !e.closest('blockquote,li')); if (!p) return;
+  p.classList.add('opening');
+  const texts = () => { const w = document.createTreeWalker(p, NodeFilter.SHOW_TEXT); const a = []; while (w.nextNode()) a.push(w.currentNode); return a; };
+  let startNode = null, startAt = 0;
+  if (mode === 'dropcap') {
+    for (const t of texts()) {
+      if (!t.nodeValue.trim()) continue;
+      const m = /^(\s*)([“"‘'(\[]*[\p{L}\p{N}])/u.exec(t.nodeValue);
+      if (m) {
+        const dc = document.createElement('span'); dc.className = 'dc'; dc.textContent = m[2];
+        const rest = document.createTextNode(t.nodeValue.slice(m[0].length));
+        t.replaceWith(dc, rest); p.classList.add('has-dc'); startNode = rest;
+      }
+      break;
+    }
+  }
+  // small caps: wrap the rest of the first `words` words
+  let count = 0, started = !startNode;
+  for (const t of texts()) {
+    if (!started) { if (t === startNode) started = true; else continue; }
+    if (t.parentNode.classList && t.parentNode.classList.contains('dc')) continue;
+    const v = t.nodeValue; let cut = v.length; const re = /\S+/g; let mm; let done = false;
+    // a drop cap that is a whole word ("A| man") counts as the first word
+    if (t === startNode && /^\s/.test(v)) count++;
+    while ((mm = re.exec(v))) { count++; if (count >= words) { cut = mm.index + mm[0].length; done = true; break; } }
+    if (v.slice(0, cut).trim()) { const sc = document.createElement('span'); sc.className = 'sc'; sc.textContent = v.slice(0, cut); const tail = document.createTextNode(v.slice(cut)); t.replaceWith(sc, tail); }
+    if (done) break;
+  }
+}
+const OPENING_CSS = '.dc{float:left;font-size:3.3em;line-height:.82;padding:.06em .08em 0 0;margin-top:.02em}.sc{font-variant:small-caps;letter-spacing:.04em}p.opening{text-indent:0}p.has-dc::after{content:"";display:block;clear:both}';
+const openingDefault = o => o.preset === 'smf' ? 'none' : (S.p.settings.openings || 'dropcap');
+
 const FORMATS = { docx: ['Word', '.docx · Word, Pages, Google Docs'], epub: ['ePub', '.epub · Kindle, Apple Books, Kobo'], pdf: ['PDF / print', 'Opens your print dialog'], html: ['Web page', '.html · one file'], md: ['Markdown', '.md · Ulysses, Obsidian'], txt: ['Plain text', '.txt · anywhere'] };
 function defaultExportOpts() {
   const saved = S.p.exportOpts || {};
-  return { format: 'docx', preset: 'smf', chapterStyle: 'words', partHeadings: true, includeSynopsis: false, ...EXPORT_PRESETS.smf, ...saved };
+  const o = { format: 'docx', preset: 'smf', chapterStyle: 'words', partHeadings: true, includeSynopsis: false, ...EXPORT_PRESETS.smf, ...saved };
+  if (!o.openings) o.openings = openingDefault(o);
+  return o;
 }
 
 /* build a flat list of blocks from the manuscript */
 function compileModel(o) {
-  const out = []; let ch = 0, pt = 0;
+  const out = []; let ch = 0, pt = 0; const ops = o.openings && o.openings !== 'none' ? openingIds(true) : new Set();
   const chapterTitle = f => {
     ch++;
     const t = f.title || '';
@@ -3502,7 +3569,7 @@ function compileModel(o) {
       } else if (it.type === 'text') {
         if (lastWasText) out.push({ t: 'break' });
         if (o.includeSynopsis && it.synopsis) out.push({ t: 'synopsis', text: it.synopsis });
-        out.push({ t: 'text', html: stripComments(it.content), title: it.title });
+        out.push({ t: 'text', html: stripComments(it.content), title: it.title, opening: ops.has(it.id) });
         lastWasText = true;
       }
     }
@@ -3529,8 +3596,9 @@ function openExport() {
     const fg = h('div', { class: 'fmt-grid' });
     for (const [k, [n, d]] of Object.entries(FORMATS)) fg.append(h('button', { class: o.format === k ? 'on' : '', onclick: () => { o.format = k; if (k === 'epub' && o.preset === 'smf') Object.assign(o, EXPORT_PRESETS.ebook, { preset: 'ebook' }); save(); draw(); } }, h('b', {}, n), h('span', {}, d)));
     opts.append(h('div', { class: 'fld' }, h('span', {}, 'Format'), fg));
-    if (o.format !== 'md' && o.format !== 'txt') opts.append(sel('Style', 'preset', Object.entries(EXPORT_PRESETS).map(([k, p]) => [k, p.name + ' · ' + p.blurb]), () => Object.assign(o, EXPORT_PRESETS[o.preset])));
+    if (o.format !== 'md' && o.format !== 'txt') opts.append(sel('Style', 'preset', Object.entries(EXPORT_PRESETS).map(([k, p]) => [k, p.name + ' · ' + p.blurb]), () => { Object.assign(o, EXPORT_PRESETS[o.preset]); o.openings = openingDefault(o); }));
     opts.append(sel('Chapter headings', 'chapterStyle', [['words', 'Chapter One'], ['numbers', 'Chapter 1'], ['numeral', '1'], ['title', 'Folder title only'], ['none', 'No headings']]));
+    if (o.format !== 'md' && o.format !== 'txt') opts.append(sel('Chapter openings', 'openings', [['dropcap', 'Drop cap and small capitals'], ['smallcaps', 'Small capitals only'], ['none', 'Plain (best for submissions)']]));
     opts.append(sel('Scene break', 'sep', [['#', '#'], ['* * *', '* * *'], ['⁂', '⁂'], ['~', '~'], ['', 'Blank line']]));
     if (o.format !== 'md' && o.format !== 'txt' && o.format !== 'epub') opts.append(h('div', { class: 'row2' }, sel('Font', 'font', ['Times New Roman', 'Courier New', 'Garamond', 'Georgia', 'Arial'].map(f => [f, f])), sel('Line spacing', 'spacing', [[1, 'Single'], [1.15, '1.15'], [1.3, '1.3'], [1.5, '1.5'], [2, 'Double']].map(([v, l]) => [v, l]))));
     opts.append(chk('Title page with contact details and word count', 'titlePage'));
@@ -3571,6 +3639,7 @@ function renderPreview(pv, o) {
       const d = h('div', { html: sanitizeHTML(b.html, { keepFonts: false, keepColors: false }) });
       for (const hr of d.querySelectorAll('hr')) hr.replaceWith(h('div', { class: 'sb' }, o.sep || ' '));
       if (!o.indentAll) { const fp = d.querySelector('p'); fp && fp.classList.add('noind'); }
+      if (b.opening && o.format !== 'md' && o.format !== 'txt') markOpening(d, o.openings);
       if (o.format === 'md') d.querySelectorAll('em,i').forEach(e => e.replaceWith('*' + e.textContent + '*'));
       p.append(d); shown += countWords(d.textContent);
     }
@@ -3608,7 +3677,7 @@ p{margin:0;text-indent:0.5in}${o.indentAll ? '' : '.ch+p,.sb+p,.first{text-inden
 .sb{text-align:center;margin:1em 0;text-indent:0}blockquote{margin:1em 2em}blockquote p{text-indent:0}
 .tp{display:flex;justify-content:space-between;line-height:1.2;white-space:pre-line}.tt{text-align:center;margin-top:3in}
 .syn{font-style:italic;color:#555;text-indent:0;margin:.5em 0}.pb{break-before:page;page-break-before:always}
-@page{size:letter;margin:1in}`;
+@page{size:letter;margin:1in}${OPENING_CSS}`;
   let body = '';
   if (o.titlePage) body += `<section><div class="tp"><div>${esc([S.p.author || '', st.contact].filter(Boolean).join('\n'))}</div><div>about ${fmt(roundedCount(exportWordCount()))} words</div></div><div class="tt"><div>${o.preset === 'smf' ? esc(S.p.title.toUpperCase()) : '<b>' + esc(S.p.title) + '</b>'}</div><p style="text-indent:0;margin-top:1em">by ${esc(S.p.author || '')}</p></div></section>`;
   let first = true;
@@ -3618,9 +3687,15 @@ p{margin:0;text-indent:0.5in}${o.indentAll ? '' : '.ch+p,.sb+p,.first{text-inden
     else if (b.t === 'chapter') { body += (b.label || b.title) ? `<h2 class="ch${pb}">${esc(b.label)}${b.title ? `<i>${esc(b.title)}</i>` : ''}</h2>` : (pb ? `<div class="${pb.trim()}"></div>` : ''); first = false; }
     else if (b.t === 'break') body += `<p class="sb">${esc(o.sep) || '&nbsp;'}</p>`;
     else if (b.t === 'synopsis') body += `<p class="syn">[${esc(b.text)}]</p>`;
-    else if (b.t === 'text') { body += sanitizeHTML(b.html, { keepFonts: false, keepColors: false }).replace(/<hr>/g, `<p class="sb">${esc(o.sep) || '&nbsp;'}</p>`); first = false; }
+    else if (b.t === 'text') { body += openedHTML(b, o).replace(/<hr>/g, `<p class="sb">${esc(o.sep) || '&nbsp;'}</p>`); first = false; }
   }
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(S.p.title)}</title><style>${css}</style></head><body>${body}</body></html>`;
+}
+
+function openedHTML(b, o) {
+  const html = sanitizeHTML(b.html, { keepFonts: false, keepColors: false });
+  if (!b.opening) return html;
+  const d = h('div', { html }); markOpening(d, o.openings); return d.innerHTML;
 }
 
 /* ---------- Markdown / text ---------- */
@@ -3678,7 +3753,7 @@ function docxRuns(node, fmt0 = {}) {
   for (const c of node.childNodes) {
     if (c.nodeType === 3) {
       const t = c.nodeValue.replace(/\s+/g, ' '); if (!t) continue;
-      let rp = ''; if (fmt0.b) rp += '<w:b/>'; if (fmt0.i) rp += '<w:i/>'; if (fmt0.u) rp += '<w:u w:val="single"/>'; if (fmt0.s) rp += '<w:strike/>'; if (fmt0.sup) rp += '<w:vertAlign w:val="superscript"/>'; if (fmt0.sub) rp += '<w:vertAlign w:val="subscript"/>';
+      let rp = ''; if (fmt0.b) rp += '<w:b/>'; if (fmt0.i) rp += '<w:i/>'; if (fmt0.sc) rp += '<w:smallCaps/>'; if (fmt0.s) rp += '<w:strike/>'; if (fmt0.u) rp += '<w:u w:val="single"/>'; if (fmt0.sup) rp += '<w:vertAlign w:val="superscript"/>'; if (fmt0.sub) rp += '<w:vertAlign w:val="subscript"/>';
       out += `<w:r>${rp ? `<w:rPr>${rp}</w:rPr>` : ''}<w:t xml:space="preserve">${xe(t)}</w:t></w:r>`;
     } else if (c.nodeType === 1) {
       const tg = c.tagName; const s = c.getAttribute('style') || ''; const f = { ...fmt0 };
@@ -3688,6 +3763,8 @@ function docxRuns(node, fmt0 = {}) {
       if (tg === 'U' || /underline/.test(s)) f.u = true;
       if (tg === 'S' || tg === 'STRIKE' || tg === 'DEL' || /line-through/.test(s)) f.s = true;
       if (tg === 'SUP') f.sup = true; if (tg === 'SUB') f.sub = true;
+      if (c.classList.contains('sc')) f.sc = true;
+      if (c.classList.contains('dc')) continue; // emitted as its own drop-cap paragraph
       out += docxRuns(c, f);
     }
   }
@@ -3717,9 +3794,16 @@ function buildDocx(model, o) {
     else if (b.t === 'synopsis') { body += P('BodyFirst', `<w:r><w:rPr><w:i/></w:rPr><w:t xml:space="preserve">[${xe(b.text)}]</w:t></w:r>`); }
     else if (b.t === 'text') {
       const d = h('div', { html: sanitizeHTML(b.html, { keepFonts: false, keepColors: false }) });
+      if (b.opening) markOpening(d, o.openings);
       const emit = (el, style) => {
         const s = el.getAttribute && (el.getAttribute('style') || ''); const al = /text-align:\s*(center|right|justify)/.exec(s || '');
         const jc = al ? `<w:jc w:val="${al[1] === 'justify' ? 'both' : al[1]}"/>` : '';
+        const dc = el.querySelector && el.querySelector('.dc');
+        if (dc) {
+          // Word drop cap: a framed paragraph holding the letter, the size Word itself would choose
+          const lines = o.spacing >= 1.5 ? 2 : 3, pitch = o.size * 1.15 * o.spacing, pt = (lines - 1) * pitch / 0.68 + o.size * 0.3;
+          body += `<w:p><w:pPr><w:pStyle w:val="BodyFirst"/><w:keepNext/><w:framePr w:dropCap="drop" w:lines="${lines}" w:wrap="around" w:vAnchor="text" w:hAnchor="text"/><w:spacing w:line="${Math.round(pt * 0.83 * 20)}" w:lineRule="exact"/><w:textAlignment w:val="baseline"/></w:pPr><w:r><w:rPr><w:position w:val="${-Math.round(pt * 0.08 * 2)}"/><w:sz w:val="${Math.round(pt * 2)}"/><w:szCs w:val="${Math.round(pt * 2)}"/></w:rPr><w:t xml:space="preserve">${xe(dc.textContent)}</w:t></w:r></w:p>`;
+        }
         body += P(style, docxRuns(el), jc);
       };
       for (const el of d.children) {
@@ -3728,7 +3812,7 @@ function buildDocx(model, o) {
         if (/^H[1-3]$/.test(tg)) { emit(el, 'Heading' + tg[1]); afterHead = true; continue; }
         if (tg === 'BLOCKQUOTE') { const ps = el.querySelectorAll('p'); if (ps.length) ps.forEach(p => emit(p, 'Quote')); else emit(el, 'Quote'); afterHead = true; continue; }
         if (tg === 'UL' || tg === 'OL') { [...el.children].forEach((li, i) => { body += P('ListPara', R(tg === 'UL' ? '•\t' : `${i + 1}.\t`) + docxRuns(li)); }); continue; }
-        emit(el, afterHead && !o.indentAll ? 'BodyFirst' : 'Body'); afterHead = false;
+        emit(el, (afterHead && !o.indentAll) || (el.classList && el.classList.contains('opening')) ? 'BodyFirst' : 'Body'); afterHead = false;
       }
       first = false;
     }
@@ -3786,12 +3870,12 @@ function buildEpub(model, o) {
       if (!cur) start(S.p.title, '');
       if (b.t === 'break') cur.html += `<p class="sb">${esc(o.sep) || '&#160;'}</p>`;
       else if (b.t === 'synopsis') cur.html += `<p class="syn">[${esc(b.text)}]</p>`;
-      else if (b.t === 'text') cur.html += toXhtml(sanitizeHTML(b.html, { keepFonts: false, keepColors: false }).replace(/<hr>/g, `<p class="sb">${esc(o.sep) || '&nbsp;'}</p>`)).replace(/&nbsp;/g, '&#160;');
+      else if (b.t === 'text') cur.html += toXhtml(openedHTML(b, o).replace(/<hr>/g, `<p class="sb">${esc(o.sep) || '&nbsp;'}</p>`)).replace(/&nbsp;/g, '&#160;');
     }
   }
   const idn = 'urn:uuid:' + (crypto.randomUUID ? crypto.randomUUID() : uid());
   const now = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
-  const css = `body{font-family:serif;line-height:1.45;margin:0 5%}p{margin:0;text-indent:1.5em}h2.ch+p,p.sb+p,.first{text-indent:0}h1.pt{text-align:center;margin-top:30%;font-weight:normal}h2.ch{text-align:center;margin:3em 0 1.5em;font-weight:normal}.ct{display:block;font-style:italic;font-size:.85em;margin-top:.4em}p.sb{text-align:center;text-indent:0;margin:1em 0}blockquote{margin:1em 1.5em}.title{text-align:center;margin-top:30%}.syn{font-style:italic;text-indent:0}`;
+  const css = `body{font-family:serif;line-height:1.45;margin:0 5%}p{margin:0;text-indent:1.5em}h2.ch+p,p.sb+p,.first{text-indent:0}h1.pt{text-align:center;margin-top:30%;font-weight:normal}h2.ch{text-align:center;margin:3em 0 1.5em;font-weight:normal}.ct{display:block;font-style:italic;font-size:.85em;margin-top:.4em}p.sb{text-align:center;text-indent:0;margin:1em 0}blockquote{margin:1em 1.5em}.title{text-align:center;margin-top:30%}.syn{font-style:italic;text-indent:0}${OPENING_CSS}`;
   const page = (title, body) => `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="en" xml:lang="en"><head><meta charset="utf-8"/><title>${xe(title)}</title><link rel="stylesheet" type="text/css" href="style.css"/></head><body>${body}</body></html>`;
   const files = [{ name: 'mimetype', data: 'application/epub+zip' },
     { name: 'META-INF/container.xml', data: `<?xml version="1.0" encoding="UTF-8"?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>` },
@@ -4250,6 +4334,7 @@ const GUIDE = [
     { h: 'Reading a whole chapter', b: `<p>Select a folder and choose <b>Write</b> to see all its scenes as one continuous document. You can edit right there, and each part still saves to its own scene.</p>` },
     { h: 'Quiet writing', b: `<p>When you start typing, the toolbars, binder, inspector and status bar fade out so there’s nothing on screen but your words. Move the mouse (or tap outside the page) and they return. It’s like a gentle focus mode that switches itself on and off. Turn it off under <b>More › Theme and appearance</b> if you prefer everything to stay put.</p>` },
     { h: 'Comfort settings', b: `<p>In <b>More › Settings › Writing</b> you can change the editor font (including Atkinson Hyperlegible, which is designed for readability), text size, line height, page width, book-style indents or spaced paragraphs, paper-on-a-desk view, typewriter scrolling and spell check. The zoom menu is at the bottom right.</p>` },
+    { h: 'Chapter openings', b: `<p>The first scene of each chapter opens like a printed book: a large <b>drop cap</b> on the first letter and <b>small capitals</b> across the opening line. Folio works out which scenes these are from your binder (the first scene inside each chapter folder, or the first scene of a short story), so it updates by itself as you reorder.</p><p>To change it, go to <b>More › Settings › Writing › Chapter openings</b> and pick Drop cap, Small capitals or Plain. It only changes how the page looks; your text isn’t altered.</p>` },
   ] },
   { id: 'plan', icon: 'grid', title: 'Planning: corkboard, outline, story map', tour: 'plan', sum: 'See the shape of your story and move it around.', sections: [
     { h: 'Corkboard', b: `<p>Select a folder (or the Manuscript) and choose <b>Corkboard</b>. Each scene is an index card with its title and synopsis. Edit cards directly, drag them to reorder the real manuscript, and click <b>New card</b> to plan scenes you haven’t written yet. <b>Read &amp; edit all</b> opens the whole folder as one document.</p>`,
@@ -4310,7 +4395,8 @@ const GUIDE = [
       <ul><li><b>Standard manuscript</b>: what agents, editors and contests expect. Title page with contact details and word count, Times New Roman 12pt, double spaced, surname / title / page number header, <b>#</b> scene breaks, chapters on new pages.</li>
       <li><b>Reader copy</b>: book-style, for beta readers or printing.</li>
       <li><b>eBook</b>: clean styles that e-readers can reflow.</li></ul>
-      <p>Formats: Word (.docx, which also opens in Pages and Google Docs), ePub (Kindle, Apple Books, Kobo), PDF via print, web page, Markdown and plain text.</p>`,
+      <p>Formats: Word (.docx, which also opens in Pages and Google Docs), ePub (Kindle, Apple Books, Kobo), PDF via print, web page, Markdown and plain text.</p>
+      <p><b>Chapter openings</b> sets how each chapter begins in the exported file: a drop cap with small capitals, small capitals only, or plain. Reader copy and eBook follow your editor setting. Standard manuscript is always plain, because agents and editors expect an unstyled manuscript. You can still change it for any single export.</p>`,
       tip: 'Fill in your author name and contact block in More › Settings first. Standard manuscript format puts them on the title page.' },
     { h: 'Choosing what’s included', b: `<p>Only the Manuscript is exported, and only items with <b>Include in export</b> ticked. Comments and notes never are. Synopses can be added (useful for a synopsis document for agents).</p>` },
     { h: 'Importing', b: `<p>Use the import button at the bottom of the binder (or <b>More › Import documents</b>) to bring in .docx, .txt, .md or .html files. Folio can split a long file so headings become chapters and scene breaks (<code>#</code> or <code>***</code>) become scenes, so an existing novel in Word can become a structured project in one step.</p>` },
