@@ -32,6 +32,8 @@
   --serif:"Literata","Iowan Old Style",Georgia,serif;
   --ed-font:var(--serif); --ed-size:18px; --ed-lh:1.7; --ed-width:720px; --zoom:1;
   --r:6px;
+  --card:#fffdf7; --card-edge:#e8e1d2; --card-rule:#e4a5a2; --card-line:#d5e3ee; --cork:#d9cbb0; --cork-tex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.38 0 0 0 0 0.25 0 0 0 0 0.1 1.6 0 0 0 -0.62'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url%28%23n%29'/%3E%3C/svg%3E");
+  --card-shadow:0 1px 1px rgba(60,40,10,.12),0 6px 14px rgba(60,40,10,.14); --card-shadow-up:0 2px 3px rgba(60,40,10,.14),0 14px 28px rgba(60,40,10,.2);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]):not([data-folio-theme]){
@@ -44,6 +46,8 @@
     --hl-weak:rgba(160,170,180,.22); --hl-cliche:rgba(240,100,110,.28); --hl-tags:rgba(40,190,165,.25);
     --hl-long:#ef6b72; --hl-echo:#6aa8e8; --hl-find:rgba(255,210,0,.3); --hl-find-cur:rgba(255,140,0,.5);
     --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35); --pop:0 10px 34px rgba(0,0,0,.5);
+    --card:#2a2b28; --card-edge:#383832; --card-rule:rgba(220,120,115,.5); --card-line:rgba(120,165,205,.16); --cork:#221e19; --cork-tex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.75 0 0 0 0 0.6 0 0 0 0 0.4 .6 0 0 0 -.33'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url%28%23n%29'/%3E%3C/svg%3E");
+    --card-shadow:0 1px 2px rgba(0,0,0,.4),0 6px 16px rgba(0,0,0,.35); --card-shadow-up:0 2px 4px rgba(0,0,0,.45),0 14px 30px rgba(0,0,0,.5);
     color-scheme:dark;
   }
 }
@@ -57,12 +61,15 @@
   --hl-weak:rgba(160,170,180,.22); --hl-cliche:rgba(240,100,110,.28); --hl-tags:rgba(40,190,165,.25);
   --hl-long:#ef6b72; --hl-echo:#6aa8e8; --hl-find:rgba(255,210,0,.3); --hl-find-cur:rgba(255,140,0,.5);
   --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35); --pop:0 10px 34px rgba(0,0,0,.5);
+  --card:#2a2b28; --card-edge:#383832; --card-rule:rgba(220,120,115,.5); --card-line:rgba(120,165,205,.16); --cork:#221e19; --cork-tex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.75 0 0 0 0 0.6 0 0 0 0 0.4 .6 0 0 0 -.33'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url%28%23n%29'/%3E%3C/svg%3E");
+  --card-shadow:0 1px 2px rgba(0,0,0,.4),0 6px 16px rgba(0,0,0,.35); --card-shadow-up:0 2px 4px rgba(0,0,0,.45),0 14px 30px rgba(0,0,0,.5);
   color-scheme:dark;
 }
 :root[data-folio-theme="sepia"]{
   --desk:#e7dfd1; --chrome:#f3ede2; --chrome-2:#ebe3d5; --paper:#fbf6ec; --ink:#33291f; --muted:#655746; --faint:#837461;
   --line:#d8cdb9; --line-2:#e6dccb; --hover:rgba(110,80,40,.07);
   --accent:#3f6a5c; --accent-2:#4d7e6e; --accent-soft:#dfe6d8; --sel:#e2dcc3; color-scheme:light;
+  --card:#fffaf0; --card-edge:#e2d6bf; --card-rule:#d99c8c; --card-line:#e0d7c3; --cork:#cfb995; --cork-tex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.38 0 0 0 0 0.25 0 0 0 0 0.1 1.6 0 0 0 -0.62'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url%28%23n%29'/%3E%3C/svg%3E");
 }
 
 *{box-sizing:border-box}
@@ -251,14 +258,26 @@ body.focus .split{display:none}
 .view-h .sub{color:var(--muted);font-size:13px}
 .view-h .spacer{flex:1}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
-.card{background:var(--paper);border-radius:4px;box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:190px;position:relative;overflow:hidden;border:1px solid var(--line-2)}
-.card.dragging{opacity:.4}
-.card.drop-l{box-shadow:-4px 0 0 var(--accent),var(--shadow)}
-.card.drop-r{box-shadow:4px 0 0 var(--accent),var(--shadow)}
-.card-strip{height:5px;flex:none}
-.card-title{border:0;background:none;font:600 15px var(--ui);padding:10px 12px 4px;border-bottom:1px solid var(--line-2);margin:0 4px}
+.card{--tilt:0deg;background:var(--card);border-radius:3px;box-shadow:var(--card-shadow);display:flex;flex-direction:column;min-height:190px;position:relative;overflow:hidden;border:1px solid var(--card-edge);transform:rotate(var(--tilt));transition:transform .18s ease,box-shadow .18s ease}
+.cards .card:nth-child(4n+1){--tilt:-.45deg}.cards .card:nth-child(4n+2){--tilt:.35deg}.cards .card:nth-child(4n+3){--tilt:-.15deg}.cards .card:nth-child(4n){--tilt:.5deg}
+.card:hover,.card:focus-within{transform:translateY(-2px);box-shadow:var(--card-shadow-up)}
+.card.stack{overflow:visible;box-shadow:5px 5px 0 -1px var(--card),5px 5px 0 0 var(--card-edge),var(--card-shadow)}
+.card.stack:hover,.card.stack:focus-within{box-shadow:5px 5px 0 -1px var(--card),5px 5px 0 0 var(--card-edge),var(--card-shadow-up)}
+.card.stack>.card-strip{border-radius:3px 3px 0 0}
+.card.lift{transform:rotate(2.5deg) scale(1.03);box-shadow:var(--pop)}
+.card.dragging{opacity:.35;transform:none;outline:2px dashed var(--accent);outline-offset:-2px}
+.card.drop-l{box-shadow:-4px 0 0 var(--accent),var(--card-shadow)}
+.card.drop-r{box-shadow:4px 0 0 var(--accent),var(--card-shadow)}
+.card-strip{height:4px;flex:none}
+.card-pin{position:absolute;top:7px;left:50%;width:13px;height:13px;margin-left:-6.5px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.75) 0 2px,transparent 3.5px),var(--pin,#9aa3ab);box-shadow:0 2px 2px rgba(0,0,0,.28),inset 0 -2px 2px rgba(0,0,0,.18);z-index:1}
+.card.pin-none .card-pin{display:none}
+.card.pin-todo{--pin:#8f99a3}.card.pin-draft{--pin:#d39a2c}.card.pin-revised{--pin:var(--accent-2)}.card.pin-final{--pin:#4f9a55}.card.pin-other{--pin:#a774c8}
+.card-title{border:0;background:none;font:600 15px var(--ui);color:var(--ink);padding:16px 12px 5px;border-bottom:1.5px solid var(--card-rule);margin:0 4px}
 .card-title:focus{outline:none;border-bottom-color:var(--accent)}
-.card-syn{flex:1;border:0;background:repeating-linear-gradient(transparent 0 23px,var(--line-2) 23px 24px);background-position:0 6px;font:14px/24px var(--serif);padding:6px 12px;resize:none;min-height:110px;color:var(--ink)}
+.card-syn{flex:1;border:0;background:repeating-linear-gradient(transparent 0 23px,var(--card-line) 23px 24px);background-position:0 6px;font:14px/24px var(--serif);padding:6px 12px;resize:none;min-height:110px;color:var(--ink)}
+.cork-board{min-height:100%;box-sizing:border-box;background-color:var(--cork);background-image:var(--cork-tex)}
+.cork-board .add-card{background:color-mix(in srgb,var(--card) 55%,transparent);border-color:color-mix(in srgb,var(--ink) 25%,transparent)}
+@media (prefers-reduced-motion:reduce){.card{transition:none}}
 .card-syn:focus{outline:none}
 .card-foot{display:flex;align-items:center;gap:8px;padding:6px 10px 8px;font-size:11px;color:var(--faint)}
 .card-foot .spacer{flex:1}
@@ -1487,7 +1506,7 @@ function applyEditorSettings() {
 
 /* ---------- corkboard ---------- */
 function renderCork(c, f) {
-  const wrap = h('div', { class: 'view-pad' });
+  const wrap = h('div', { class: 'view-pad cork-board' });
   wrap.append(h('div', { class: 'view-h' }, h('h2', {}, f.title), h('span', { class: 'sub' }, plural(f.children.length, 'card') + ' · ' + fmt(wordsUnder(f.id)) + ' words'), h('span', { class: 'spacer' }),
     h('button', { class: 'btn sm', onclick: () => { S.mode = 'write'; f.view = 'write'; renderAll(); } }, icon('pen', 15), 'Read & edit all')));
   const grid = h('div', { class: 'cards' });
@@ -1499,16 +1518,18 @@ function corkCard(f, id) {
   const it = I(id); const lab = labelOf(it);
   const syn = h('textarea', { class: 'card-syn', placeholder: it.type === 'folder' ? 'What happens in this chapter?' : 'Synopsis: what happens, and why it matters', value: it.synopsis || '', 'aria-label': 'Synopsis',
     oninput: e => { it.synopsis = e.target.value; markDirty(); } });
-  const card = h('div', { class: 'card', draggable: 'true', 'data-id': id },
-    h('div', { class: 'card-strip', style: { background: lab ? lab.color : 'transparent' } }),
+  const pin = { 'To do': 'todo', 'First draft': 'draft', 'Revised': 'revised', 'Final': 'final', 'Done': 'final' }[it.status] || (it.status ? 'other' : 'none');
+  const card = h('div', { class: 'card pin-' + pin + (it.type === 'folder' ? ' stack' : ''), draggable: 'true', 'data-id': id },
+    h('div', { class: 'card-strip', style: { background: lab ? lab.color : 'transparent' }, title: lab ? 'Label: ' + lab.name : null }),
+    h('span', { class: 'card-pin', title: it.status ? 'Status: ' + it.status : 'No status yet', 'aria-hidden': 'true' }),
     h('input', { class: 'card-title', value: it.title, 'aria-label': 'Title', oninput: e => { it.title = e.target.value; markDirty(); renderBinderSoon(); } }),
     it.type === 'folder' ? h('span', { class: 'kind', title: 'Folder' }, icon('folder', 15)) : null,
     syn,
     h('div', { class: 'card-foot' }, it.status ? h('span', { class: 'stamp s-' + it.status.split(' ')[0] }, it.status) : null, h('span', { class: 'spacer' }),
       h('span', {}, fmt(wordsUnder(id)) + ' w'), h('button', { class: 'open', onclick: () => openItem(id) }, 'Open')));
   card.addEventListener('dblclick', e => { if (!e.target.closest('input,textarea')) openItem(id); });
-  card.addEventListener('dragstart', e => { if (e.target.closest('input,textarea') && e.target !== card) { e.preventDefault(); return; } S.drag = id; card.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', id); });
-  card.addEventListener('dragend', () => { card.classList.remove('dragging'); $$('.card').forEach(x => x.classList.remove('drop-l', 'drop-r')); });
+  card.addEventListener('dragstart', e => { if (e.target.closest('input,textarea') && e.target !== card) { e.preventDefault(); return; } S.drag = id; card.classList.add('lift'); setTimeout(() => { card.classList.remove('lift'); card.classList.add('dragging'); }, 0); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', id); });
+  card.addEventListener('dragend', () => { card.classList.remove('dragging', 'lift'); $$('.card').forEach(x => x.classList.remove('drop-l', 'drop-r')); });
   card.addEventListener('dragover', e => { if (!S.drag || S.drag === id) return; e.preventDefault(); const r = card.getBoundingClientRect(); const left = e.clientX < r.left + r.width / 2; card.classList.toggle('drop-l', left); card.classList.toggle('drop-r', !left); });
   card.addEventListener('dragleave', () => card.classList.remove('drop-l', 'drop-r'));
   card.addEventListener('drop', e => {
@@ -4337,7 +4358,8 @@ const GUIDE = [
     { h: 'Chapter openings', b: `<p>The first scene of each chapter opens like a printed book: a large <b>drop cap</b> on the first letter and <b>small capitals</b> across the opening line. Folio works out which scenes these are from your binder (the first scene inside each chapter folder, or the first scene of a short story), so it updates by itself as you reorder.</p><p>To change it, go to <b>More › Settings › Writing › Chapter openings</b> and pick Drop cap, Small capitals or Plain. It only changes how the page looks; your text isn’t altered.</p>` },
   ] },
   { id: 'plan', icon: 'grid', title: 'Planning: corkboard, outline, story map', tour: 'plan', sum: 'See the shape of your story and move it around.', sections: [
-    { h: 'Corkboard', b: `<p>Select a folder (or the Manuscript) and choose <b>Corkboard</b>. Each scene is an index card with its title and synopsis. Edit cards directly, drag them to reorder the real manuscript, and click <b>New card</b> to plan scenes you haven’t written yet. <b>Read &amp; edit all</b> opens the whole folder as one document.</p>`,
+    { h: 'Corkboard', b: `<p>Select a folder (or the Manuscript) and choose <b>Corkboard</b>. Each scene is an index card with its title and synopsis. Edit cards directly, drag them to reorder the real manuscript, and click <b>New card</b> to plan scenes you haven’t written yet. <b>Read &amp; edit all</b> opens the whole folder as one document.</p>
+      <p>Reading the cards at a glance: the <b>pin</b> colour shows the scene’s status (grey: to do, amber: first draft, teal: revised, green: final; no pin means no status yet). The thin <b>strip</b> along the top is the card’s label colour. A card that looks like a small <b>stack</b> is a chapter or folder with scenes inside; double-click it to open its own board.</p>`,
       tip: 'Plotters: fill the corkboard with one-line synopses before you draft. Pantsers: write first, then summarise each scene on its card afterwards. It’s the fastest way to see what you actually wrote.' },
     { h: 'Outline', b: `<p>The same scenes as a table, with synopsis, status, label, point of view, words and word target. Use it to check pacing (are some scenes much longer than others?) and to update many scenes quickly.</p>` },
     { h: 'Story map', b: `<p>Every scene in order, left to right. Mark which <b>plotlines</b> and <b>characters</b> appear in each one. Gaps jump out: a subplot that disappears for ten chapters, or a character missing from the middle of the book. Manage plotlines and their colours in <b>More › Settings › Labels and plotlines</b>.</p>` },
