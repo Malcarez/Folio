@@ -612,6 +612,30 @@ body.quiet .topbar,body.quiet .toolbar,body.quiet .binder,body.quiet .inspector,
   .proj-title{max-width:130px}
 }
 
+/* celebrations */
+.cel{position:fixed;left:50%;bottom:52px;transform:translateX(-50%);z-index:320;display:flex;align-items:center;gap:12px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:12px 10px 12px 14px;box-shadow:var(--pop);max-width:min(440px,calc(100vw - 32px));animation:cel-in .5s cubic-bezier(.2,.9,.3,1.2) both;overflow:visible}
+.cel.out{animation:cel-out .45s ease both}
+.cel-art svg{width:40px;height:40px;fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;display:block}
+.cel-art .fill{fill:color-mix(in srgb,var(--accent) 25%,transparent)}
+.cel-art .rays{transform-origin:24px 24px;animation:cel-spin 6s linear infinite}
+.cel-txt{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.cel-txt b{font-family:var(--serif,Georgia,serif);font-size:17px;font-weight:600}
+.cel-txt span{font-size:13px;color:var(--muted)}
+.cel.big{padding:16px 12px 16px 18px}
+.cel.big .cel-txt b{font-size:20px}
+.cel-conf{position:absolute;inset:0;pointer-events:none}
+.cel-conf i{position:absolute;top:0;width:7px;height:10px;border-radius:2px;background:var(--accent);opacity:0;animation:cel-conf 1.8s ease-out forwards}
+.cel-conf i:nth-child(3n){background:var(--warn)}.cel-conf i:nth-child(3n+1){background:var(--accent-2)}
+@keyframes cel-in{from{opacity:0;transform:translate(-50%,16px) scale(.96)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes cel-out{to{opacity:0;transform:translate(-50%,10px)}}
+@keyframes cel-spin{to{transform:rotate(360deg)}}
+@keyframes cel-conf{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--x),-120px) rotate(var(--r))}}
+.ring.done{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.ring.glow{animation:ring-glow 1.6s ease 3}
+@keyframes ring-glow{50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--accent) 30%,transparent)}}
+body.quiet .cel{opacity:1}
+@media (prefers-reduced-motion:reduce){.cel,.cel.out,.cel-art .rays,.ring.glow{animation:none}}
+
 </style>
 </head>
 <body>
@@ -1733,7 +1757,7 @@ function commitEdits() {
     const ids = new Set([...html.matchAll(/data-c="([^"]+)"/g)].map(m => m[1]));
     if (it.comments.some(c => !ids.has(c.id))) { it.comments = it.comments.filter(c => ids.has(c.id)); if (S.inspTab === 'comments') renderInspector(); }
   }
-  pendingEds.clear(); trackWords(); markDirty(); renderStatus(); updateBinderCounts();
+  pendingEds.clear(); trackWords(); markDirty(); renderStatus(); updateBinderCounts(); checkGoals();
 }
 function maybeAutoSnapshot(it) {
   const d = dayKey();
@@ -2420,7 +2444,7 @@ function renderStatus() {
   sb.textContent = '';
   sb.append(h('span', { id: 'st-doc' }),
     h('button', { class: 'st-btn st-prog hide-sm', onclick: openGoals, title: 'Manuscript progress' }, 'Manuscript ', h('b', {}, fmt(tot)), tg ? ' / ' + fmt(tg) : '', tg ? h('span', { class: 'bar' }, h('i', { style: { width: Math.min(100, tot / tg * 100) + '%' } })) : null),
-    h('button', { class: 'st-btn', onclick: openGoals, title: 'Words written today' }, h('span', { class: 'ring', style: { '--p': Math.max(0, Math.min(100, daily ? tw / daily * 100 : 0)) } }), 'Today ', h('b', {}, (tw >= 0 ? '+' : '') + fmt(tw)), daily ? ' / ' + fmt(daily) : ''),
+    h('button', { class: 'st-btn', onclick: openGoals, title: 'Words written today' }, h('span', { class: 'ring' + (daily && tw >= daily ? ' done' : ''), style: { '--p': Math.max(0, Math.min(100, daily ? tw / daily * 100 : 0)) } }), 'Today ', h('b', {}, (tw >= 0 ? '+' : '') + fmt(tw)), daily ? ' / ' + fmt(daily) : ''),
     h('span', { class: 'spacer' }),
     h('button', { class: 'st-btn st-save', id: 'st-save', title: 'Where your work is saved', onclick: () => popMenu($('#st-save'), [
       { label: 'Save now', icon: 'check', key: 'Ctrl S', onClick: () => { flushEditors(); persistSoon.flush(); persist(); toast('Saved.'); } },
@@ -2555,6 +2579,7 @@ function openSettings(section) {
     choice('Interface size', [['small', 'Small'], ['normal', 'Normal'], ['large', 'Large']], PREFS.ui || 'normal', v => { PREFS.ui = v; savePrefs(); applyTheme(); }),
     pchk('Quiet writing: fade the toolbars and panels while you type (move the mouse to bring them back)', 'quiet'),
     pchk('Show a small formatting bar when you select text', 'bubble'),
+    pchk('Celebrate when I reach a daily goal, a scene target or a manuscript milestone', 'celebrate'),
     h('div', { class: 'lbl-sm' }, 'Author details (this project, for the title page)'),
     h('div', { class: 'row2' }, h('label', { class: 'fld' }, h('span', {}, 'Author name'), h('input', { type: 'text', value: S.p.author || '', oninput: e => { S.p.author = e.target.value; markDirty(); } })),
       h('label', { class: 'fld' }, h('span', {}, 'Surname for page headers'), h('input', { type: 'text', value: st.surname || '', placeholder: 'Defaults to last word of name', oninput: e => upd('surname', e.target.value) }))),
@@ -2894,7 +2919,7 @@ function openGoals() {
     body.textContent = '';
     const tw = todayWords(); const daily = dailyGoal();
     const days = Object.entries(S.p.history).sort();
-    let streak = 0; for (let d = new Date(); ; d.setDate(d.getDate() - 1)) { const r = S.p.history[dayKey(d)]; if (r && r.end - r.base > 0) streak++; else if (dayKey(d) !== dayKey()) break; if (streak > 3650) break; }
+    const streak = streakDays();
     const month = days.filter(([k]) => k.slice(0, 7) === dayKey().slice(0, 7)).reduce((a, [, r]) => a + Math.max(0, r.end - r.base), 0);
     let deadlineTxt = 'Set a deadline to get a daily target that adjusts as you go.';
     if (st.deadline && st.target) { const left = Math.max(0, Math.ceil((new Date(st.deadline + 'T23:59:59') - new Date()) / 86400000)); deadlineTxt = `${plural(left, 'day')} left. Write ${fmt(daily)} words a day to finish ${fmt(Math.max(0, st.target - tot))} remaining words by ${new Date(st.deadline + 'T12:00').toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}.`; }
@@ -2921,6 +2946,62 @@ function openGoals() {
   };
   draw();
   modal({ title: 'Goals', body, actions: [{ label: 'Done', primary: true }] });
+}
+
+function streakDays() {
+  let streak = 0; for (let d = new Date(); ; d.setDate(d.getDate() - 1)) { const r = S.p.history[dayKey(d)]; if (r && r.end - r.base > 0) streak++; else if (dayKey(d) !== dayKey()) break; if (streak > 3650) break; }
+  return streak;
+}
+
+/* ---------- celebrations: a quiet moment when a goal is reached ----------
+   Each goal is celebrated once: the day (history flag), a document target (item flag),
+   and the manuscript at 25/50/75/100% (settings flag). Never steals focus. */
+function checkGoals() {
+  if (!S.p || PREFS.celebrate === false) return;
+  const H = S.p.history[dayKey()]; if (!H) return;
+  const tw = H.end - H.base, daily = dailyGoal();
+  if (daily && tw >= daily && !H.cel) {
+    H.cel = true; const n = streakDays();
+    return celebrate('Daily goal reached', `${fmt(tw)} words today.` + (n > 1 ? ` That’s ${n} days in a row you’ve written.` : ' Anything more is a bonus.'), 'sun');
+  }
+  const it = I(S.cur);
+  // A target that is new (or changed) and already met is marked silently, so nothing fires for old work.
+  if (it && isDoc(it) && it.target && it.tgtFor !== it.target) { it.tgtFor = it.target; it.targetHit = it.wc >= it.target; }
+  if (it && isDoc(it) && it.target && !it.targetHit && it.wc >= it.target) {
+    it.targetHit = true;
+    return celebrate('“' + (it.title || 'Untitled') + '” reached its target', `${fmt(it.wc)} of ${fmt(it.target)} words.`, 'flag');
+  }
+  if (it && it.targetHit && it.target && it.wc < it.target * 0.9) it.targetHit = false; // re-arm after big cuts
+  const st = S.p.settings, tot = totalWords();
+  if (st.target) {
+    const marks = [[100, 'Draft complete', 'You’ve reached your manuscript target. Time to rest, then revise.'], [75, 'Three-quarters of the way', ''], [50, 'Halfway there', ''], [25, 'A quarter of the way', '']];
+    if (st.milesFor !== st.target) { st.milesFor = st.target; st.miles = {}; for (const [q] of marks) if (tot >= st.target * q / 100) st.miles[q] = true; }
+    for (const [pct, title, extra] of marks) {
+      if (tot >= st.target * pct / 100 && !st.miles[pct]) {
+        for (const [q] of marks) if (q <= pct) st.miles[q] = true; // don't fire the smaller ones afterwards
+        return celebrate(title, `${fmt(tot)} of ${fmt(st.target)} words in the manuscript. ` + extra, pct === 100 ? 'book' : 'flag', pct === 100);
+      }
+    }
+  }
+}
+function celebrate(title, text, kind = 'sun', big = false) {
+  markDirty();
+  const old = $('#cel'); if (old) old.remove();
+  const glyph = { sun: '<circle cx="24" cy="24" r="8"/><g class="rays">' + Array.from({ length: 8 }, (_, i) => `<line x1="24" y1="6" x2="24" y2="11" transform="rotate(${i * 45} 24 24)"/>`).join('') + '</g>',
+    flag: '<path d="M14 40V8"/><path class="fill" d="M14 9h20l-5 7 5 7H14z"/>',
+    book: '<path d="M8 12c6-3 11-3 16 1 5-4 10-4 16-1v26c-6-3-11-3-16 1-5-4-10-4-16-1z"/><path d="M24 13v26"/>' }[kind];
+  const card = h('div', { id: 'cel', class: 'cel' + (big ? ' big' : ''), role: 'status', 'aria-live': 'polite' },
+    h('div', { class: 'cel-art', html: `<svg viewBox="0 0 48 48" aria-hidden="true">${glyph}</svg>` }),
+    h('div', { class: 'cel-txt' }, h('b', {}, title), h('span', {}, text)),
+    h('button', { class: 'icon-btn', 'aria-label': 'Close', onmousedown: e => e.preventDefault(), onclick: () => { card.remove(); const ed = activeEditor(); if (ed) ed.commands.focus(); } }, icon('x', 14)));
+  if (big && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const conf = h('div', { class: 'cel-conf', 'aria-hidden': 'true' });
+    for (let i = 0; i < 28; i++) conf.append(h('i', { style: { left: (Math.random() * 100) + '%', animationDelay: (Math.random() * .6) + 's', '--r': (Math.random() * 720 - 360) + 'deg', '--x': (Math.random() * 80 - 40) + 'px' } }));
+    card.append(conf);
+  }
+  document.body.append(card);
+  const ring = document.querySelector('#statusbar .ring'); if (ring && kind === 'sun') { ring.classList.add('glow'); }
+  setTimeout(() => { card.classList.add('out'); setTimeout(() => card.remove(), 500); }, big ? 12000 : 7000);
 }
 
 /* =========================================================
@@ -4211,10 +4292,11 @@ const GUIDE = [
       tip: 'The best use is as a sounding board when you’re stuck. Ask “What does the reader not know yet at this point?” rather than “What should happen next?”. Its questions spark your own ideas.' },
     { h: 'Without any AI', b: `<p><b>Questions</b> draws from a built-in deck of craft questions about stakes, desire, conflict and change. <b>Synopsis</b> builds a summary from your own sentences.</p>` },
   ] },
-  { id: 'goals', icon: 'target', title: 'Goals and habits', tour: 'goals', sum: 'Targets, deadlines, streaks and history.', sections: [
+  { id: 'goals', icon: 'target', title: 'Goals and habits', tour: 'goals', sum: 'Targets, deadlines, streaks, history and celebrations.', sections: [
     { h: 'Setting goals', b: `<p>Click <b>Goals</b> to set:</p><ul><li>a <b>manuscript target</b> (for example 80,000 words),</li><li>an optional <b>deadline</b>: Folio divides the remaining words by the days left, so your daily target adjusts as you go,</li><li>or a fixed <b>daily goal</b> instead.</li></ul><p>Each scene can also have its own target (Inspector › Details).</p>` },
     { h: 'Tracking', b: `<p>The ring in the status bar fills as you write today. The Goals window shows your streak and a 30-day chart. Deleting words reduces today’s count, so heavy revision days can look small. That’s expected; revision is real work.</p>`,
       tip: 'Set a daily goal small enough that you’d be embarrassed to miss it. A streak of 300-word days beats occasional 3,000-word binges.' },
+    { h: 'Celebrations', b: `<p>When you reach today’s goal, a small card appears at the bottom of the screen with your word count and how many days in a row you’ve written, and the status-bar ring glows. Folio does the same when a scene reaches its own target, and when the manuscript passes a quarter, half and three-quarters of its target, with a little confetti when the draft is complete.</p><p>Each one shows once and fades by itself; it never interrupts your typing. Goals you had already met before setting them are not celebrated. To turn celebrations off, go to <b>More › Theme and appearance</b>.</p>` },
   ] },
   { id: 'workspace', icon: 'focus', title: 'Your workspace', tour: 'workspace', sum: 'Focus mode, split view, themes and quick open.', sections: [
     { h: 'Focus mode', b: `<p>${K('Ctrl Shift F')} or the <b>Focus</b> button hides everything but the page and goes full screen. A small word count shows at the bottom. Press ${K('Esc')} to return. In settings you can fade every paragraph except the one you’re writing, and turn on typewriter scrolling so the line you’re typing stays mid-screen.</p>` },
